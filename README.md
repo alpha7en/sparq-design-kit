@@ -9,10 +9,9 @@ Claude сам собирает в Figma **презентации** (1920×1080) 
 - **Node.js 18+**: nodejs.org → кнопка LTS → установить.
 - **Figma Desktop** (не браузер): figma.com/downloads.
 
-**Шаг 1. Плагин.** В Claude Desktop → Code напишите Claude:
-> Установи плагин SPARQ Studio: выполни `claude plugin marketplace add alpha7en/sparq-design-kit`, затем `claude plugin install sparq-studio@sparq`.
+**Шаг 1. Плагин.** В Claude Desktop откройте настройки плагинов → **добавить свой маркетплейс (custom marketplace)** → вставьте ссылку `https://github.com/alpha7en/sparq-design-kit` → в появившемся маркетплейсе **sparq** установите плагин **sparq-studio**. Затем **полностью перезапустите Claude Desktop** (⌘Q и открыть заново).
 
-Если Claude ответит, что команды `claude` нет, — попросите его сначала выполнить `curl -fsSL https://claude.ai/install.sh | bash` (установка Claude Code), затем повторить. То же самое можно сделать в Терминале. Затем **полностью перезапустите Claude Desktop** (⌘Q и открыть заново).
+Другой способ — попросить Claude во вкладке Code: «выполни `claude plugin marketplace add https://github.com/alpha7en/sparq-design-kit` и `claude plugin install sparq-studio@sparq`». Используйте один способ: если маркетплейс уже добавлен одним, второй выдаст ошибку «source doesn't match» — тогда сначала удалите маркетплейс sparq и добавьте заново.
 
 **Шаг 2. Мост в Figma.** Напишите Claude: **«/sparq-studio:setup»** — он проведёт по шагам. Суть: Figma Desktop → **Plugins → Development → Import plugin from manifest…** → файл `~/.sparq-studio/bridge/manifest.json` (в окне выбора файла нажмите ⌘⇧G и вставьте путь `~/.sparq-studio/bridge`). Плагин называется **SPARQ Studio Bridge**.
 
