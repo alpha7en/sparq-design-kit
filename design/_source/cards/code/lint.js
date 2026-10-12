@@ -1,7 +1,7 @@
 
 const out=[];const cards=['FRAME','COMPONENT','INSTANCE'].includes(root.type)?[root]:root.findAll(n=>['FRAME','COMPONENT','INSTANCE'].includes(n.type)&&n.parent&&!['COMPONENT','INSTANCE','FRAME'].includes(n.parent.type)&&Math.round(n.width)===1080&&(Math.round(n.height)===1080||Math.round(n.height)===810||Math.round(n.height)===1350));
-for(const c of cards){const C=c.absoluteBoundingBox;const isBg=n=>{let p=n;while(p&&p!==c){if(/^bg/i.test(p.name))return true;p=p.parent}const b=n.absoluteBoundingBox;return b&&b.width*b.height>0.45*C.width*C.height;};
- const leaves=c.findAll(n=>n.visible!==false&&!('children' in n&&n.children.length)&&n.absoluteBoundingBox);
+for(const c of cards){const C=c.absoluteBoundingBox;const vis=n=>{let p=n;while(p&&p!==c.parent){if(p.visible===false)return false;p=p.parent}return true};const isBg=n=>{let p=n;while(p&&p!==c){if(/^bg/i.test(p.name))return true;p=p.parent}const b=n.absoluteBoundingBox;return b&&b.width*b.height>0.45*C.width*C.height;};
+ const leaves=c.findAll(n=>vis(n)&&!('children' in n&&n.children.length)&&n.absoluteBoundingBox);
  const texts=leaves.filter(n=>n.type==='TEXT'&&!/^bg/.test(n.name));const others=leaves.filter(n=>n.type!=='TEXT'&&!isBg(n)&&(n.opacity??1)>0.2);
  const issues=[];
  for(const t of texts){const b=t.absoluteBoundingBox;let onGlass=false;{let p=t.parent;while(p&&p!==c){if(p.effects&&p.effects.some(e=>e.type==='BACKGROUND_BLUR'&&e.visible!==false)){onGlass=p;break}p=p.parent}}const m=Math.min(b.x-C.x,b.y-C.y,C.x+C.width-(b.x+b.width),C.y+C.height-(b.y+b.height));if(m<63)issues.push('край '+Math.round(m)+'px: «'+t.characters.slice(0,24)+'»');
@@ -13,7 +13,7 @@ for(const c of cards){const C=c.absoluteBoundingBox;const isBg=n=>{let p=n;while
    if(gap<12)issues.push((gap<0?'наезд':'зазор '+Math.round(gap)+'px')+': «'+t.characters.slice(0,20)+'» ↔ '+o.type+' '+o.name.slice(0,16));}
   for(const u of texts){if(u===t||u.id<t.id)continue;const a=u.absoluteBoundingBox;const gx=Math.max(a.x-(b.x+b.width),b.x-(a.x+a.width)),gy=Math.max(a.y-(b.y+b.height),b.y-(a.y+a.height));if(Math.max(gx,gy)<0)issues.push('текст на тексте: «'+t.characters.slice(0,16)+'» × «'+u.characters.slice(0,16)+'»');}}
  {const bgi=c.findOne(n=>n.name==='bg'&&n.type==='INSTANCE');if(bgi){const deco=bgi.findAll(n=>!('children' in n&&n.children.length)&&n.visible!==false&&!/vignette|clear|dots$/.test(n.name)&&(n.opacity??1)>0.15).filter(n=>{const b=n.absoluteBoundingBox;return b&&b.width*b.height<0.45*C.width*C.height});
-  const content=c.findAll(n=>n.visible!==false&&!isBg(n)&&(n.type==='TEXT'||(n.effects&&n.effects.some(e=>e.type==='BACKGROUND_BLUR'))||n.name==='graphic'||n.name==='rubric'||n.name==='mark'||n.name==='figures'));
+  const content=c.findAll(n=>vis(n)&&!isBg(n)&&(n.type==='TEXT'||(n.effects&&n.effects.some(e=>e.type==='BACKGROUND_BLUR'))||n.name==='graphic'||n.name==='rubric'||n.name==='mark'||n.name==='figures'));
   for(const d of deco){const a=d.absoluteRenderBounds||d.absoluteBoundingBox;const pad=(d.effects||[]).reduce((m,e)=>e.type==='LAYER_BLUR'?Math.max(m,e.radius*0.6):m,0);for(const t of content){const b=t.absoluteBoundingBox;if(!b)continue;if(a.x-pad<b.x+b.width-8&&a.x+a.width+pad>b.x+8&&a.y-pad<b.y+b.height-8&&a.y+a.height+pad>b.y+8){issues.push('декор под контентом: '+d.name+' ↔ '+(t.type==='TEXT'?'«'+t.characters.slice(0,16)+'»':t.name));break}}}}}
  if(issues.length)out.push({card:c.name,id:c.id,n:issues.length,issues:issues.slice(0,8)});}
 return {cards:cards.length,bad:out.length,out};

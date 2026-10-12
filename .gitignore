@@ -3,3 +3,4 @@ mcp/dist/
 upstream-figma-console-mcp/
 .DS_Store
 *.log
+.scratch/

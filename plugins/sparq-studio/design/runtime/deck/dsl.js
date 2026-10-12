@@ -501,7 +501,7 @@ L.content = async (slide, spec, T) => {
   }
   const bottom = root.y + root.height;
   if (root.height > avail + 1 || bottom > limit + 1) warn('overflow: content ends at y=' + Math.round(bottom) + ', limit ' + Math.round(limit) + ' (' + Math.round(bottom - limit) + ' px over) — shorten text or split the slide; never shrink fonts below the styles');
-  else if (!hasGrow && !spec.fill && !(spec.body || []).some(b => b.type === 'sources') && limit - bottom > 170) warn('empty bottom: ' + Math.round(limit - bottom) + ' px free below content — add a visual, enlarge spacing (pad), or set "grow" on a list/card');
+  else if (!hasGrow && !spec.fill && !spec.bg && !(spec.body || []).some(b => b.type === 'sources') && limit - bottom > 170) warn('empty bottom: ' + Math.round(limit - bottom) + ' px free below content — add a visual, enlarge spacing (pad), or set "grow" on a list/card');
   return root;
 };
 // Cover: brand top-left, kicker + big name + subtitle on the left, illustration right, meta rows bottom-left.
@@ -567,6 +567,24 @@ D.illus.bloch = async (slide, T) => {
 };
 
 // ---------- entry point ----------
+// ---------- backdrop: line-art backgrounds from the arena set (rings | orbits | interference | wires | ticks | dots | trace | neon)
+// spec.bg = "rings" | {name, anchor:"bottom|top|center", flip:true, op}. Details live at the edge of the slide; keep the text zone clear.
+D.bgSvg = {}; // injected by the server for the names used
+const hexOf = c => '#' + [c.r, c.g, c.b].map(v => Math.round(v * 255).toString(16).padStart(2, '0')).join('');
+D.backdrop = (slide, spec, T) => {
+  const b = typeof spec.bg === 'string' ? { name: spec.bg } : spec.bg; if (!b) return;
+  if (['orbits', 'interference', 'neon'].includes(b.name) && (spec.layout || 'content') === 'content') warn('bg "' + b.name + '" занимает центр и ложится под контент — для обложки/главы/финала; на контентных слайдах: rings, wires, ticks, dots, trace');
+  let svg = D.bgSvg[b.name];
+  if (!svg) throw new Error('unknown bg "' + b.name + '". Known: rings, orbits, interference, wires, ticks, dots, trace, neon');
+  const f = slide.fills && slide.fills[0]; const bgc = f && f.color ? hexOf(f.color) : (T.dark ? '#0A0A0C' : '#F4F0E8');
+  svg = svg.replace(/<rect width="720" height="450" fill="[^"]*"\/>/, '').replace(/#0A0A0C/g, bgc);
+  if (!T.dark) svg = svg.replace(/stroke="white"/g, 'stroke="#0A0A0C"').replace(/fill="white"/g, 'fill="#0A0A0C"').replace(/#FF2A2A|#FF3B3B/g, '#B80000');
+  const n = figma.createNodeFromSvg(svg); slide.appendChild(n); slide.insertChild(0, n); n.name = 'bg/' + b.name;
+  n.rescale(1920 / 720); n.x = 0; n.y = b.anchor === 'top' ? 0 : b.anchor === 'center' ? (1080 - n.height) / 2 : 1080 - n.height;
+  if (b.flip) n.relativeTransform = [[-1, 0, 1920], [0, 1, n.y]];
+  if (b.op !== undefined) n.opacity = b.op;
+  return n;
+};
 D.build = async (spec) => {
   D.issues = []; D.later = [];
   if (!spec.key) throw new Error('slide spec needs "key" (e.g. "S05") — it makes rebuilds idempotent');
@@ -577,6 +595,7 @@ D.build = async (spec) => {
   const layout = L[spec.layout || 'content'];
   if (!layout) throw new Error('unknown layout "' + spec.layout + '". Known: ' + Object.keys(L).join(', '));
   await layout(slide, spec, T);
+  D.backdrop(slide, spec, T);
   for (const f of D.later) f();
   if (spec.decor) for (const d of spec.decor) {
     if (d.type === 'field') { const f = K.field(slide, d.w, d.h, T.tc, { op: d.op || 0.17, step: d.step || 24 }); f.x = d.x; f.y = d.y; }

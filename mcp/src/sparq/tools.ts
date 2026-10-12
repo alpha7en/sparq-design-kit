@@ -246,7 +246,9 @@ export function registerSparqTools(server: McpServer, ctx: Ctx) {
 						if (edits) { results.push({ key: spec.key, skipped: "the user edited this slide by hand since the last build — merge these edits into the spec, then call again with force:true", manualEdits: edits }); continue; }
 					}
 					const s = inlineImages(spec, assetsDir, notes);
-					const built = await run(ctx, deckPrelude() + `return await D.build(${lit(s)});`, fileKey, 30000);
+					const bgName = s.bg && (typeof s.bg === "string" ? s.bg : s.bg.name);
+					const bgInject = bgName && /^[a-z]+$/.test(bgName) && existsSync(join(designDir(), "runtime/deck/bg", bgName + ".svg")) ? `D.bgSvg=${lit({ [bgName]: asset("runtime/deck/bg/" + bgName + ".svg") })};` : "";
+					const built = await run(ctx, deckPrelude() + bgInject + `return await D.build(${lit(s)});`, fileKey, 30000);
 					const check = await run(ctx, auditPrelude() + `const sl=await figma.getNodeByIdAsync(${lit(built.id)});const a=(await __audit(sl)).filter(x=>!/ring|decor\\/|source|^EDGE|BOX×BOX|^CROSS|donut|icon\\/|GAP<PAD steps/.test(x));const texts=sl.findAll(n=>n.type==='TEXT'&&n.visible!==false).map(t=>({where:t.name,text:t.characters}));return {a,texts};`, fileKey, 20000);
 					const lintHits = profile === "off" ? [] : lintTexts(check.texts.map((t: any) => ({ where: built.key + "/" + t.where, text: t.text })), profile as Profile);
 					const w = check.texts.filter((t: any) => !["counter", "footnote"].includes(t.where)).reduce((a: number, t: any) => a + words(t.text), 0);
@@ -307,7 +309,7 @@ return out;`;
 	// ------------------------------------------------------------------ cards
 	server.tool(
 		"sparq_cards",
-		"Build Telegram carousel cards (1080²) from specs with the SPARQ card system (skill sparq-cards). Opens/creates page «P·<date> <slug>» and appends cards to its «карусель» row. spec = {kind, tone?, bg?, props:{title,counter,text,…}, bold?:[…], rubric?, kicker?, chart?:{type,size,data}, texts?:{layer:text}, photo?:path}. ≤ 3–4 cards per call. Returns ids and lint.",
+		"Build Telegram carousel cards (1080²) from specs with the SPARQ card system (skill sparq-cards). Opens/creates page «P·<date> <slug>» and appends cards to its «карусель» row. spec = {kind, tone?, bg? (omit or 'auto' = picked by role; blotch backgrounds are replaced), props:{title,counter,text,…}, bold?:[…], rubric?, kicker?, items?:[{icon,title,note}] (kind=list, ≤4), plate?:{icon,tone,size,x,y}, chart?:{type,size,data}, texts?:{layer:text}, photo?:path}. ≤ 3–4 cards per call. Returns ids and lint.",
 		{ slug: z.string(), date: z.string().optional(), cards: z.array(z.record(z.any())).min(1), fileKey: z.string().optional(), assetsDir: z.string().optional() },
 		async ({ slug, date, cards, fileKey, assetsDir }) => {
 			try {
@@ -316,7 +318,7 @@ return out;`;
 				const r = await run(ctx, cardsPrelude() + `await O.page(${lit(slug)},${lit(date || null)}||undefined);const out=[];
 for(const s of ${lit(specs)}){const photo=s.b64?s:null;const spec={...s};delete spec.b64;delete spec.size;const c=await O.card(spec);
  if(photo){const ph=c.node.findOne(n=>n.name==='photo');if(ph){const im=figma.createImage(figma.base64Decode(photo.b64));ph.fills=[{type:'IMAGE',imageHash:im.hash,scaleMode:'FILL'}];for(const nm of ['bg/head','bg/body']){const x=c.node.findOne(n=>n.name===nm);if(x)x.visible=false}}}
- out.push({id:c.id,issues:c.issues})}
+ out.push({id:c.id,issues:c.issues,...(c.notes&&c.notes.length?{notes:c.notes}:{})})}
 const l=await O.lint();return {cards:out,lint:l};`, fileKey, 30000);
 				return ok({ ...r, notes });
 			} catch (e: any) { return fail(e.message); }
@@ -383,11 +385,17 @@ return all.filter(s=>!keys||keys.includes(s.getSharedPluginData('sparqdeck','key
 	// ------------------------------------------------------------------ catalog (offline)
 	server.tool(
 		"sparq_catalog",
-		"Offline lists from the sealed design kit (no Figma call): what='icons' (deck icon names), 'cards' (card components: kinds, tones, backgrounds, chart types, properties), 'charts' (card chart generators and data shapes).",
-		{ what: z.enum(["icons", "cards", "charts"]) },
+		"Offline lists from the sealed design kit (no Figma call): what='icons' (deck icon names), 'card-icons' (icons + decor + backgrounds available to cards, by role), 'cards' (card components: kinds, tones, backgrounds, chart types, properties), 'charts' (card chart generators and data shapes).",
+		{ what: z.enum(["icons", "card-icons", "cards", "charts"]) },
 		async ({ what }) => {
 			if (what === "icons") return ok(Object.keys(json("icons/deck.json")));
 			if (what === "charts") return ok(asset("catalog/charts.md"));
+			if (what === "card-icons") {
+				const L = json("library/cards.json");
+				const icons = L.items.filter((i: any) => /^sparq\/icon\//.test(i.name)).map((i: any) => i.name.slice(11));
+				const sets = (n: string) => (L.items.find((i: any) => i.name === n)?.variants || []).map((v: any) => v.n);
+				return ok({ icons, iconStyles: ["line", "solid"], illustrationCovers: { "cover-sphere": "сфера Блоха — кубиты, состояния, введение", "cover-landscape": "энергетический ландшафт — оптимизация, отжиг, вычисления", "cover-contours": "контуры PQC и КРК — защита данных, криптография", "cover-atom": "атом и интерференция — сенсоры, физика", "cover-network": "карта сети — кейс, инфраструктура, маршрут", "cover-barcode": "штрихкод→сфера — отчёт, аналитика, серия" }, iconPlate: sets("sparq/icon-plate"), backgrounds: { cover: ["cover-ring", "cover-orbit", "cover-interference", "cover-circuit", "cover-supremat", "cover-bolt", "cover-red-ring"], text: ["dark-ring", "dark-orbit", "dark-crosshair", "dark-dots", "dark-wires", "dark-field"], full: ["dark-circuit", "dark-ticks"], light: ["light-paper", "light-frost", "light-grid"], red: ["red", "red-deep"], blotchForbidden: ["dark-haze", "dark-gradient", "glass-orb", "glass-bolt"] } });
+			}
 			const lib = json("library/cards.json");
 			return ok(lib.items.filter((i: any) => /card|bg|tag|rubric|chart|slot|mark|series|topic|country|status|meta/.test(i.name)).map((i: any) => ({ name: i.name, variants: i.variants.map((v: any) => v.n).join(" | ").slice(0, 600), props: Object.fromEntries(Object.entries(i.props).filter(([, d]: any) => d.type !== "VARIANT").map(([k, d]: any) => [k, d.type])) })));
 		},

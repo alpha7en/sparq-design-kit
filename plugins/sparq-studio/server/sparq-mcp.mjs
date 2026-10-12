@@ -85394,7 +85394,9 @@ return ${mod("runtime/install/library.js")};`, fileKey, 3e4);
           }
         }
         const s2 = inlineImages(spec, assetsDir, notes);
-        const built = await run(ctx, deckPrelude() + `return await D.build(${lit(s2)});`, fileKey, 3e4);
+        const bgName = s2.bg && (typeof s2.bg === "string" ? s2.bg : s2.bg.name);
+        const bgInject = bgName && /^[a-z]+$/.test(bgName) && existsSync13(join16(designDir(), "runtime/deck/bg", bgName + ".svg")) ? `D.bgSvg=${lit({ [bgName]: asset("runtime/deck/bg/" + bgName + ".svg") })};` : "";
+        const built = await run(ctx, deckPrelude() + bgInject + `return await D.build(${lit(s2)});`, fileKey, 3e4);
         const check2 = await run(ctx, auditPrelude() + `const sl=await figma.getNodeByIdAsync(${lit(built.id)});const a=(await __audit(sl)).filter(x=>!/ring|decor\\/|source|^EDGE|BOX\xD7BOX|^CROSS|donut|icon\\/|GAP<PAD steps/.test(x));const texts=sl.findAll(n=>n.type==='TEXT'&&n.visible!==false).map(t=>({where:t.name,text:t.characters}));return {a,texts};`, fileKey, 2e4);
         const lintHits = profile === "off" ? [] : lintTexts(check2.texts.map((t) => ({ where: built.key + "/" + t.where, text: t.text })), profile);
         const w2 = check2.texts.filter((t) => !["counter", "footnote"].includes(t.where)).reduce((a2, t) => a2 + words2(t.text), 0);
@@ -85435,14 +85437,14 @@ ${code}
       return fail2(e.message);
     }
   });
-  server.tool("sparq_cards", "Build Telegram carousel cards (1080\xB2) from specs with the SPARQ card system (skill sparq-cards). Opens/creates page \xABP\xB7<date> <slug>\xBB and appends cards to its \xAB\u043A\u0430\u0440\u0443\u0441\u0435\u043B\u044C\xBB row. spec = {kind, tone?, bg?, props:{title,counter,text,\u2026}, bold?:[\u2026], rubric?, kicker?, chart?:{type,size,data}, texts?:{layer:text}, photo?:path}. \u2264 3\u20134 cards per call. Returns ids and lint.", { slug: external_exports.string(), date: external_exports.string().optional(), cards: external_exports.array(external_exports.record(external_exports.any())).min(1), fileKey: external_exports.string().optional(), assetsDir: external_exports.string().optional() }, async ({ slug, date: date3, cards, fileKey, assetsDir }) => {
+  server.tool("sparq_cards", "Build Telegram carousel cards (1080\xB2) from specs with the SPARQ card system (skill sparq-cards). Opens/creates page \xABP\xB7<date> <slug>\xBB and appends cards to its \xAB\u043A\u0430\u0440\u0443\u0441\u0435\u043B\u044C\xBB row. spec = {kind, tone?, bg? (omit or 'auto' = picked by role; blotch backgrounds are replaced), props:{title,counter,text,\u2026}, bold?:[\u2026], rubric?, kicker?, items?:[{icon,title,note}] (kind=list, \u22644), plate?:{icon,tone,size,x,y}, chart?:{type,size,data}, texts?:{layer:text}, photo?:path}. \u2264 3\u20134 cards per call. Returns ids and lint.", { slug: external_exports.string(), date: external_exports.string().optional(), cards: external_exports.array(external_exports.record(external_exports.any())).min(1), fileKey: external_exports.string().optional(), assetsDir: external_exports.string().optional() }, async ({ slug, date: date3, cards, fileKey, assetsDir }) => {
     try {
       const notes = [];
       const specs = cards.map((c) => inlineImages(boldMarkup(c), assetsDir, notes));
       const r = await run(ctx, cardsPrelude() + `await O.page(${lit(slug)},${lit(date3 || null)}||undefined);const out=[];
 for(const s of ${lit(specs)}){const photo=s.b64?s:null;const spec={...s};delete spec.b64;delete spec.size;const c=await O.card(spec);
  if(photo){const ph=c.node.findOne(n=>n.name==='photo');if(ph){const im=figma.createImage(figma.base64Decode(photo.b64));ph.fills=[{type:'IMAGE',imageHash:im.hash,scaleMode:'FILL'}];for(const nm of ['bg/head','bg/body']){const x=c.node.findOne(n=>n.name===nm);if(x)x.visible=false}}}
- out.push({id:c.id,issues:c.issues})}
+ out.push({id:c.id,issues:c.issues,...(c.notes&&c.notes.length?{notes:c.notes}:{})})}
 const l=await O.lint();return {cards:out,lint:l};`, fileKey, 3e4);
       return ok2({ ...r, notes });
     } catch (e) {
@@ -85512,11 +85514,17 @@ return all.filter(s=>!keys||keys.includes(s.getSharedPluginData('sparqdeck','key
       return fail2(e.message);
     }
   });
-  server.tool("sparq_catalog", "Offline lists from the sealed design kit (no Figma call): what='icons' (deck icon names), 'cards' (card components: kinds, tones, backgrounds, chart types, properties), 'charts' (card chart generators and data shapes).", { what: external_exports.enum(["icons", "cards", "charts"]) }, async ({ what }) => {
+  server.tool("sparq_catalog", "Offline lists from the sealed design kit (no Figma call): what='icons' (deck icon names), 'card-icons' (icons + decor + backgrounds available to cards, by role), 'cards' (card components: kinds, tones, backgrounds, chart types, properties), 'charts' (card chart generators and data shapes).", { what: external_exports.enum(["icons", "card-icons", "cards", "charts"]) }, async ({ what }) => {
     if (what === "icons")
       return ok2(Object.keys(json("icons/deck.json")));
     if (what === "charts")
       return ok2(asset("catalog/charts.md"));
+    if (what === "card-icons") {
+      const L2 = json("library/cards.json");
+      const icons = L2.items.filter((i) => /^sparq\/icon\//.test(i.name)).map((i) => i.name.slice(11));
+      const sets = (n) => (L2.items.find((i) => i.name === n)?.variants || []).map((v) => v.n);
+      return ok2({ icons, iconStyles: ["line", "solid"], illustrationCovers: { "cover-sphere": "\u0441\u0444\u0435\u0440\u0430 \u0411\u043B\u043E\u0445\u0430 \u2014 \u043A\u0443\u0431\u0438\u0442\u044B, \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F, \u0432\u0432\u0435\u0434\u0435\u043D\u0438\u0435", "cover-landscape": "\u044D\u043D\u0435\u0440\u0433\u0435\u0442\u0438\u0447\u0435\u0441\u043A\u0438\u0439 \u043B\u0430\u043D\u0434\u0448\u0430\u0444\u0442 \u2014 \u043E\u043F\u0442\u0438\u043C\u0438\u0437\u0430\u0446\u0438\u044F, \u043E\u0442\u0436\u0438\u0433, \u0432\u044B\u0447\u0438\u0441\u043B\u0435\u043D\u0438\u044F", "cover-contours": "\u043A\u043E\u043D\u0442\u0443\u0440\u044B PQC \u0438 \u041A\u0420\u041A \u2014 \u0437\u0430\u0449\u0438\u0442\u0430 \u0434\u0430\u043D\u043D\u044B\u0445, \u043A\u0440\u0438\u043F\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u044F", "cover-atom": "\u0430\u0442\u043E\u043C \u0438 \u0438\u043D\u0442\u0435\u0440\u0444\u0435\u0440\u0435\u043D\u0446\u0438\u044F \u2014 \u0441\u0435\u043D\u0441\u043E\u0440\u044B, \u0444\u0438\u0437\u0438\u043A\u0430", "cover-network": "\u043A\u0430\u0440\u0442\u0430 \u0441\u0435\u0442\u0438 \u2014 \u043A\u0435\u0439\u0441, \u0438\u043D\u0444\u0440\u0430\u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u0430, \u043C\u0430\u0440\u0448\u0440\u0443\u0442", "cover-barcode": "\u0448\u0442\u0440\u0438\u0445\u043A\u043E\u0434\u2192\u0441\u0444\u0435\u0440\u0430 \u2014 \u043E\u0442\u0447\u0451\u0442, \u0430\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430, \u0441\u0435\u0440\u0438\u044F" }, iconPlate: sets("sparq/icon-plate"), backgrounds: { cover: ["cover-ring", "cover-orbit", "cover-interference", "cover-circuit", "cover-supremat", "cover-bolt", "cover-red-ring"], text: ["dark-ring", "dark-orbit", "dark-crosshair", "dark-dots", "dark-wires", "dark-field"], full: ["dark-circuit", "dark-ticks"], light: ["light-paper", "light-frost", "light-grid"], red: ["red", "red-deep"], blotchForbidden: ["dark-haze", "dark-gradient", "glass-orb", "glass-bolt"] } });
+    }
     const lib = json("library/cards.json");
     return ok2(lib.items.filter((i) => /card|bg|tag|rubric|chart|slot|mark|series|topic|country|status|meta/.test(i.name)).map((i) => ({ name: i.name, variants: i.variants.map((v) => v.n).join(" | ").slice(0, 600), props: Object.fromEntries(Object.entries(i.props).filter(([, d2]) => d2.type !== "VARIANT").map(([k2, d2]) => [k2, d2.type])) })));
   });
