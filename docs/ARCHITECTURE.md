@@ -10,7 +10,7 @@ Claude ──(MCP: sparq_*)──► sparq-mcp.mjs ──(WebSocket 9223–9232)
 ```
 
 ## Слои
-1. **Плагин Claude** (`plugins/sparq-studio`): `skills/` — процедуры и правила с прогрессивной загрузкой (SKILL.md ≈ 450–500 слов, справочники по запросу, примеры grep-ом); `commands/` — входы в режимы; `agents/sparq-critic` — независимая проверка; `hooks/` — короткий контекст на старте.
+1. **Плагин Claude** (`plugins/sparq-studio`): `skills/` — процедуры и правила с прогрессивной загрузкой (SKILL.md ≈ 450–500 слов, справочники по запросу, примеры grep-ом); `commands/` — входы в режимы; `agents/` — независимая проверка (`sparq-critic` дизайн, `sparq-copy-critic` тексты, `sparq-fact-checker` цифры и свежесть); `hooks/` — короткий контекст на старте.
 2. **MCP-сервер** (`mcp/` → `server/sparq-mcp.mjs`): форк figma-console-mcp. Из ~100 исходных инструментов оставлено 16 нужных (остальные — `SPARQ_TOOLSET=full`), добавлены `sparq_*` (`mcp/src/sparq/`). Инструкции сервера — короткий указатель на скиллы.
 3. **Рантайм в Figma** (`design/runtime`): `deck/kit.js` (токены, текст, фреймы, иконки, картинки, слайды), `deck/dsl.js` (блоки и макеты), `common/audit.js` (вёрстка), `install/tokens.js`, `install/library.js` (компоненты из снимка), `cards/*` (система карточек: ops, генераторы графиков, lint), `maint/*` (выгрузка источников).
 4. **Ассеты** (`design/tokens`, `icons`, `library`): собираются `tools/build-design.mjs` из сырых выгрузок `design/_source`.

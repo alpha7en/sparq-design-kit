@@ -316,6 +316,41 @@ B.legend = async (par, b, { T }) => {
   return lg;
 };
 
+// navigation hub / table of contents: rows |n⟩ title — sub … pages; current section highlighted
+B.toc = async (par, b, { T }) => {
+  const L = K.f(par, { name: 'toc', dir: 'VERTICAL', gap: 0 }); if (inAL(par)) K.fillW(L);
+  const py = b.pad ?? 18; K.rule(L, T.t3, 2);
+  let i = 0;
+  for (const raw of b.items) {
+    const it = typeof raw === 'string' ? { title: raw } : raw; i++; const cur = !!it.current;
+    const r = K.f(L, { name: 'entry', dir: 'HORIZONTAL', gap: 24, pad: [py, 0, py, 0], alignC: 'BASELINE' }); K.fillW(r);
+    if (b.grow) { r.layoutSizingVertical = 'FILL'; r.counterAxisAlignItems = 'CENTER'; }
+    await K.t(r, '|' + (it.n ?? i) + '⟩', b.numStyle || 'heading', cur ? T.accentText : T.t3, { w: b.numW || 96, raw: true });
+    const col = K.f(r, { name: 'text', dir: 'VERTICAL', gap: 4 }); col.layoutSizingHorizontal = 'FILL';
+    await K.t(col, it.title, b.size || 'heading-s', cur ? T.accentText : T.tc);
+    if (it.sub) await K.t(col, it.sub, 'body-xs', T.t2);
+    if (it.pages) await K.t(r, String(it.pages), 'label', T.t3, { hug: true, raw: true });
+    K.rule(L, T.lns);
+  }
+  return L;
+};
+// numbered source list for a «Источники» slide (columns, small type)
+B.sources = async (par, b, ctx) => {
+  const { T } = ctx; const cols = b.cols || 2; const gap = 48;
+  const R = K.f(par, { name: 'sources', dir: 'HORIZONTAL', gap, alignC: 'MIN' }); if (inAL(par)) K.fillW(R);
+  const total = ctx.w || iw(par); const cw = Math.floor((total - gap * (cols - 1)) / cols);
+  const per = Math.ceil(b.items.length / cols); let n = b.start || 1;
+  for (let c = 0; c < cols; c++) {
+    const col = K.f(R, { name: 'col', dir: 'VERTICAL', gap: b.gap ?? 14, w: cw });
+    for (const s of b.items.slice(c * per, (c + 1) * per)) {
+      const r = K.f(col, { dir: 'HORIZONTAL', gap: 14, alignC: 'MIN' }); K.fillW(r);
+      await K.t(r, String(n++), 'label', T.t3, { w: 48, raw: true, name: 'label' });
+      const t = await K.t(r, s, b.size || 'body-xs', T.t2, { name: 'source' }); t.layoutSizingHorizontal = 'FILL';
+    }
+  }
+  return R;
+};
+
 // ---------- process / time ----------
 B.steps = async (par, b, ctx) => {
   const { T } = ctx;
@@ -466,7 +501,7 @@ L.content = async (slide, spec, T) => {
   }
   const bottom = root.y + root.height;
   if (root.height > avail + 1 || bottom > limit + 1) warn('overflow: content ends at y=' + Math.round(bottom) + ', limit ' + Math.round(limit) + ' (' + Math.round(bottom - limit) + ' px over) — shorten text or split the slide; never shrink fonts below the styles');
-  else if (!hasGrow && !spec.fill && limit - bottom > 170) warn('empty bottom: ' + Math.round(limit - bottom) + ' px free below content — add a visual, enlarge spacing (pad), or set "grow" on a list/card');
+  else if (!hasGrow && !spec.fill && !(spec.body || []).some(b => b.type === 'sources') && limit - bottom > 170) warn('empty bottom: ' + Math.round(limit - bottom) + ' px free below content — add a visual, enlarge spacing (pad), or set "grow" on a list/card');
   return root;
 };
 // Cover: brand top-left, kicker + big name + subtitle on the left, illustration right, meta rows bottom-left.

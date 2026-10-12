@@ -30,7 +30,7 @@ export function lintTexts(texts: { where: string; text: string }[], profile: Pro
 	const hits: { where: string; rule: string; hint: string; snippet: string }[] = [];
 	const extraRes = extra.filter(Boolean).map(p => ({ id: "blacklist", re: new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"), hint: "из чёрного списка команды" } as Rule));
 	for (const { where, text } of texts) {
-		if (!text || text.length < 4 || /^\|/.test(text) || /(^|\/)(kicker|counter|label)$/.test(where)) continue;
+		if (!text || text.length < 4 || /^\|/.test(text) || /(^|\/)(kicker|counter|label|source)$/.test(where)) continue;
 		const t = text.replace(/ /g, " ");
 		for (const r of [...RULES, ...extraRes]) {
 			if (r.profiles && !r.profiles.includes(profile)) continue;

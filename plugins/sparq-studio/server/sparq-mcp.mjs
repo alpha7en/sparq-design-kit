@@ -85138,7 +85138,7 @@ function lintTexts(texts, profile = "pitch", extra = []) {
   const hits = [];
   const extraRes = extra.filter(Boolean).map((p2) => ({ id: "blacklist", re: new RegExp(p2.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"), hint: "\u0438\u0437 \u0447\u0451\u0440\u043D\u043E\u0433\u043E \u0441\u043F\u0438\u0441\u043A\u0430 \u043A\u043E\u043C\u0430\u043D\u0434\u044B" }));
   for (const { where, text } of texts) {
-    if (!text || text.length < 4 || /^\|/.test(text) || /(^|\/)(kicker|counter|label)$/.test(where))
+    if (!text || text.length < 4 || /^\|/.test(text) || /(^|\/)(kicker|counter|label|source)$/.test(where))
       continue;
     const t = text.replace(/ /g, " ");
     for (const r of [...RULES, ...extraRes]) {

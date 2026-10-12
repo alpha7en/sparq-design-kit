@@ -15,7 +15,7 @@ description: This skill should be used when the user asks to make, rebuild or fi
 4. **Спецификации.** По `references/dsl.md`; полные образцы — `examples/pitch-deck-accelerator.jsonl` (читать точечно через grep по ключу, не целиком). Текст с `**жирным**` для сканирования. Картинки — локальные пути.
 5. **Сборка.** `sparq_slides` по 1–4 слайда. Разобрать `issues` и `lint`, исправить спецификацию, пересобрать. Цель — пустые issues.
 6. **Глазами.** `figma_capture_screenshot {nodeId, scale:0.6}` каждого слайда; сомнительные детали — кадром узла `scale:1`. Пройти `references/quality.md`. Не сдавать без просмотренного скриншота.
-7. **Вычитка.** Скилл `sparq-editor`: каждая фраза, `sparq_text_lint`, единообразие терминов по всей колоде.
+7. **Вычитка и независимая проверка.** Скилл `sparq-editor`: каждая фраза, единообразие терминов по всей колоде. Перед сдачей — агенты `sparq-critic` и `sparq-copy-critic` параллельно, для отчёта с цифрами — `sparq-fact-checker`. Правила из `sparq-studio/references/lessons.md`.
 8. **Сдача.** Коротко: что сделано, что осталось спорным (с вариантами), что нужно от пользователя. Экспорт — `sparq_export`.
 
 ## Принципы (кратко; детали — references/quality.md)
@@ -33,6 +33,6 @@ description: This skill should be used when the user asks to make, rebuild or fi
 
 ## Ресурсы
 - `references/dsl.md` — все блоки и параметры (читать перед первой спецификацией).
-- `references/patterns.md` — рецепты 19 типов слайдов.
+- `references/patterns.md` — рецепты 23 типов слайдов, отличия отчёта от питча.
 - `references/quality.md` — чек-лист проверки и классы прошлых ошибок.
 - `examples/pitch-deck-accelerator.jsonl` — 18 готовых спецификаций.

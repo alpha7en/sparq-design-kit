@@ -10,11 +10,12 @@ description: This skill should be used when the user asks to make Telegram cards
 ## Порядок работы
 1. `sparq_status` → файл (дизайн-файл, не Slides) с установленным `cards`; нет — `sparq_setup_file {kit:"cards"}`.
 2. **Вход:** тексты карточек (post.md/бриф) и данные. Текст автора не переписывать; не влезает → следующий kind (S→M→L) или `continue`, кегль не уменьшать.
-3. **Разметка:** на каждую карточку — роль, число слов, есть ли данные и какой вопрос они отвечают. Шаблон карусели — `references/system.md` §Шаблоны.
+3. **Разметка (драматургия):** таблица `№ · пункт брифа · функция в истории · что нового вносит · ключевые факты · kind · фон · графика (что видно, чего нет в тексте)`. Каждая карточка вносит новое; «зачем это читателю» — в первых двух; 1–2 лёгкие карточки (цитата, число, схема) на 2–3 месте; рубрика = формат поста. Шаблон карусели — `references/system.md` §Шаблоны; правила — `sparq-studio/references/lessons.md`.
 4. **Карточка:** kind/tone по таблице норм (`references/system.md`), фон по правилам ритма, график — по `references/charts.md` (сначала «нужна ли графика вообще»).
 5. **Сборка:** `sparq_cards {slug, date, cards:[spec…]}` по 3–4 карточки за вызов. Ответ содержит `lint` (`bad` = 0 — цель).
 6. **Глазами:** `figma_capture_screenshot` ряда «карусель» scale 0.5, затем сомнительные карточки по одной; уменьшение до ~390 px — читается ли без усилия.
-7. **Вычитка** — скилл `sparq-editor` (профиль `post`).
+7. **Вычитка и проверка** — скилл `sparq-editor` (профиль `post`); перед сдачей агенты `sparq-critic` (дизайн, ритм, телефон) и `sparq-copy-critic`; есть цифры — `sparq-fact-checker`.
+7a. **Стресс-проверка** новой компоновки (режимы B/C): залить самый короткий и самый длинный текст, самые плотные данные — нет ли переполнения, дыр, кегля < 28.
 8. **Экспорт:** `sparq_export {nodeIds:[…], format:"png", scale:1.69, outDir}` по карточкам.
 
 ## Spec карточки
@@ -25,6 +26,7 @@ description: This skill should be used when the user asks to make Telegram cards
  "chart":{"type":"barH","size":"L","data":{"data":[{"label":"Китай","value":15.3,"accent":1}],"pre":"$"}},
  "texts":{"item-title":"…"}, "photo":"путь/к/фото.jpg"}
 ```
+`**жирное**` в текстах свойств сервер сам переводит в `bold`.
 Обложки: `props:{title, series}` (typo), `{title, subtitle}` (typo-circuit), `{name, regalia}` (person), `{title, issue}` (rubric-number). Hero: `number`. Quote: `text, who, role`. Bubble: `bubble`. Источник (`source`) на карточку не ставим (только если сам источник — смысл карточки).
 
 ## Режимы

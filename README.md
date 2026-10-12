@@ -33,7 +33,7 @@ Claude сам собирает в Figma **презентации** (1920×1080) 
 
 | часть | где | что |
 |---|---|---|
-| плагин | `plugins/sparq-studio/` | скиллы (старт, презентации, карточки, редактура), команды, агент-критик, хук старта |
+| плагин | `plugins/sparq-studio/` | скиллы (старт, презентации, карточки, редактура, уроки правок), команды, три агента-проверяющих, хук старта |
 | MCP-сервер | `plugins/sparq-studio/server/` | форк [figma-console-mcp](https://github.com/southleft/figma-console-mcp) (MIT) + инструменты `sparq_*`, собран в один файл |
 | мост для Figma | `plugins/sparq-studio/server/figma-desktop-bridge/` | плагин Figma «SPARQ Studio Bridge» |
 | дизайн-система | `plugins/sparq-studio/design/` | токены, иконки, библиотека 292 компонентов карточек, рантайм (движок слайдов, генераторы, проверки) |
