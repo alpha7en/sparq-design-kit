@@ -248,7 +248,8 @@ export function registerSparqTools(server: McpServer, ctx: Ctx) {
 					const s = inlineImages(spec, assetsDir, notes);
 					const bgName = s.bg && (typeof s.bg === "string" ? s.bg : s.bg.name);
 					const bgInject = bgName && /^[a-z]+$/.test(bgName) && existsSync(join(designDir(), "runtime/deck/bg", bgName + ".svg")) ? `D.bgSvg=${lit({ [bgName]: asset("runtime/deck/bg/" + bgName + ".svg") })};` : "";
-					const built = await run(ctx, deckPrelude() + bgInject + `return await D.build(${lit(s)});`, fileKey, 30000);
+					const il = typeof s.illus === "string" && /^[a-z-]+$/.test(s.illus) && existsSync(join(designDir(), "runtime/deck/illus", s.illus + ".svg")) ? `D.illusSvg=${lit({ [s.illus]: asset("runtime/deck/illus/" + s.illus + ".svg") })};` : "";
+					const built = await run(ctx, deckPrelude() + bgInject + il + `return await D.build(${lit(s)});`, fileKey, 30000);
 					const check = await run(ctx, auditPrelude() + `const sl=await figma.getNodeByIdAsync(${lit(built.id)});const a=(await __audit(sl)).filter(x=>!/ring|decor\\/|source|^EDGE|BOX×BOX|^CROSS|donut|icon\\/|GAP<PAD steps/.test(x));const texts=sl.findAll(n=>n.type==='TEXT'&&n.visible!==false).map(t=>({where:t.name,text:t.characters}));return {a,texts};`, fileKey, 20000);
 					const lintHits = profile === "off" ? [] : lintTexts(check.texts.map((t: any) => ({ where: built.key + "/" + t.where, text: t.text })), profile as Profile);
 					const w = check.texts.filter((t: any) => !["counter", "footnote"].includes(t.where)).reduce((a: number, t: any) => a + words(t.text), 0);

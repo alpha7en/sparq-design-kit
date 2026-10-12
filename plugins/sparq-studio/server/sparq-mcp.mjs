@@ -85054,7 +85054,7 @@ import { homedir as homedir2 } from "os";
 import { readFileSync as readFileSync12, existsSync as existsSync12 } from "fs";
 import { join as join15, dirname as dirname11, resolve as resolve8 } from "path";
 import { fileURLToPath as fileURLToPath4 } from "url";
-var KIT_VERSION = "1.0.0";
+var KIT_VERSION = "1.1.0";
 function findDesignDir() {
   if (process.env.SPARQ_DESIGN_DIR && existsSync12(process.env.SPARQ_DESIGN_DIR))
     return process.env.SPARQ_DESIGN_DIR;
@@ -85396,7 +85396,8 @@ return ${mod("runtime/install/library.js")};`, fileKey, 3e4);
         const s2 = inlineImages(spec, assetsDir, notes);
         const bgName = s2.bg && (typeof s2.bg === "string" ? s2.bg : s2.bg.name);
         const bgInject = bgName && /^[a-z]+$/.test(bgName) && existsSync13(join16(designDir(), "runtime/deck/bg", bgName + ".svg")) ? `D.bgSvg=${lit({ [bgName]: asset("runtime/deck/bg/" + bgName + ".svg") })};` : "";
-        const built = await run(ctx, deckPrelude() + bgInject + `return await D.build(${lit(s2)});`, fileKey, 3e4);
+        const il2 = typeof s2.illus === "string" && /^[a-z-]+$/.test(s2.illus) && existsSync13(join16(designDir(), "runtime/deck/illus", s2.illus + ".svg")) ? `D.illusSvg=${lit({ [s2.illus]: asset("runtime/deck/illus/" + s2.illus + ".svg") })};` : "";
+        const built = await run(ctx, deckPrelude() + bgInject + il2 + `return await D.build(${lit(s2)});`, fileKey, 3e4);
         const check2 = await run(ctx, auditPrelude() + `const sl=await figma.getNodeByIdAsync(${lit(built.id)});const a=(await __audit(sl)).filter(x=>!/ring|decor\\/|source|^EDGE|BOX\xD7BOX|^CROSS|donut|icon\\/|GAP<PAD steps/.test(x));const texts=sl.findAll(n=>n.type==='TEXT'&&n.visible!==false).map(t=>({where:t.name,text:t.characters}));return {a,texts};`, fileKey, 2e4);
         const lintHits = profile === "off" ? [] : lintTexts(check2.texts.map((t) => ({ where: built.key + "/" + t.where, text: t.text })), profile);
         const w2 = check2.texts.filter((t) => !["counter", "footnote"].includes(t.where)).reduce((a2, t) => a2 + words2(t.text), 0);

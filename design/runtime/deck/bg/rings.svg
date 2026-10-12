@@ -7,8 +7,8 @@
 <circle cx="660" cy="410" r="439.25" stroke="white" stroke-opacity="0.1" stroke-width="1.5"/>
 <line x1="360" y1="409.25" x2="720" y2="409.25" stroke="white" stroke-opacity="0.12" stroke-width="1.5"/>
 <line x1="659.25" y1="110" x2="659.25" stroke="white" stroke-opacity="0.12" stroke-width="1.5"/>
-<g filter="url(#filter0_d_105_1819)">
-<circle cx="660" cy="410" r="7" fill="#FF2A2A"/>
+<g>
+<circle cx="660" cy="410" r="7" fill="white" fill-opacity="0.4"/>
 </g>
 </g>
 <defs>

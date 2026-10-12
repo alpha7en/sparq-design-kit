@@ -288,8 +288,8 @@
 <circle cx="662" cy="286" r="1.2" fill="white" fill-opacity="0.255556"/>
 <circle cx="684" cy="286" r="1.2" fill="white" fill-opacity="0.255556"/>
 <circle cx="706" cy="286" r="1.2" fill="white" fill-opacity="0.255556"/>
-<g filter="url(#filter0_d_105_1948)">
-<circle cx="650" cy="410" r="6" fill="#FF2A2A"/>
+<g>
+<circle cx="650" cy="410" r="6" fill="white" fill-opacity="0.4"/>
 </g>
 <defs>
 <filter id="filter0_d_105_1948" x="624" y="384" width="52" height="52" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">

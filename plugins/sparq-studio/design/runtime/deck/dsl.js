@@ -351,6 +351,44 @@ B.sources = async (par, b, ctx) => {
   return R;
 };
 
+// ---------- X5 report patterns ----------
+// hub: centre + orbit rings + nodes around; items [{title, sub, hot}] — `hot` draws the only accent thread. w/h in px.
+B.hub = async (par, b, { T }) => {
+  const w = b.w || 1100, h = b.h || 600; const f = K.f(par, { name: 'hub', w, h }); f.layoutMode = 'NONE'; f.resize(w, h);
+  if (inAL(par)) { f.layoutSizingHorizontal = 'FIXED'; f.layoutSizingVertical = 'FIXED'; }
+  const cx = w / 2, cy = h / 2, rx = w * 0.28, ry = h * 0.33; const n = b.items.length;
+  for (const k of [0.4, 0.7, 1]) { const e = figma.createEllipse(); f.appendChild(e); e.resize(2 * rx * k, 2 * ry * k); e.x = cx - rx * k; e.y = cy - ry * k; e.fills = []; K.S(e, 'strokes', [K.P(T.ln)]); e.strokeWeight = 1.5; e.name = 'orbit'; }
+  const pts = b.items.map((it, i) => { const a = -Math.PI / 2 + (2 * Math.PI * i) / n; return { x: cx + rx * Math.cos(a), y: cy + ry * Math.sin(a), a, it }; });
+  for (const p of pts) { const v = figma.createVector(); f.appendChild(v); v.vectorPaths = [{ windingRule: 'NONE', data: 'M ' + cx + ' ' + cy + ' L ' + p.x + ' ' + p.y }]; v.fills = []; K.S(v, 'strokes', [K.P(p.it.hot ? T.accent : T.ln)]); v.strokeWeight = p.it.hot ? 3 : 1.5; v.name = p.it.hot ? 'link/hot' : 'link'; }
+  const c = figma.createEllipse(); f.appendChild(c); c.resize(300, 300); c.x = cx - 150; c.y = cy - 150; K.S(c, 'fills', [K.P(T.card)]); K.S(c, 'strokes', [K.P(T.ln)]); c.strokeWeight = 1.5; c.name = 'centre';
+  const ct = await K.t(f, b.center, 'body-s-strong', T.tc, { w: 260, align: 'CENTER' }); ct.x = cx - 130; ct.y = cy - ct.height / 2;
+  for (const p of pts) {
+    const d0 = figma.createEllipse(); f.appendChild(d0); d0.resize(16, 16); d0.x = p.x - 8; d0.y = p.y - 8; K.S(d0, 'fills', [K.P(T.bg)]); K.S(d0, 'strokes', [K.P(T.tc)]); d0.strokeWeight = 2; d0.name = 'node';
+    const col = K.f(f, { name: 'label', dir: 'VERTICAL', gap: 4, w: 300 }); const cs = Math.cos(p.a), sn = Math.sin(p.a); const al = cs > 0.25 ? 'LEFT' : cs < -0.25 ? 'RIGHT' : 'CENTER';
+    const t1 = await K.t(col, p.it.title, 'body-s-strong', T.tc, { w: 300, align: al }); if (p.it.sub) await K.t(col, p.it.sub, 'body-xs', T.t2, { w: 300, align: al });
+    col.x = al === 'LEFT' ? p.x + 26 : al === 'RIGHT' ? p.x - 26 - 300 : p.x - 150; col.y = al === 'CENTER' ? (sn < 0 ? p.y - col.height - 18 : p.y + 18) : p.y - col.height / 2;
+  }
+  return f;
+};
+// waffle: shares of a whole as squares. {total:60, filled:42, half:6, cols:20, cell:22}
+B.waffle = async (par, b, { T }) => {
+  const cols = b.cols || 20, total = b.total || 60, filled = b.filled || 0, half = b.half || 0, cell = b.cell || 22, gap = b.gap || 6;
+  const g = K.f(par, { name: 'waffle', dir: 'VERTICAL', gap }); let i = 0;
+  while (i < total) { const row = K.f(g, { dir: 'HORIZONTAL', gap }); for (let c = 0; c < cols && i < total; c++, i++) { const r = figma.createRectangle(); row.appendChild(r); r.resize(cell, cell); r.cornerRadius = 4; if (i < filled) K.S(r, 'fills', [K.P(T.tc)]); else if (i < filled + half) K.S(r, 'fills', [K.P(T.tc, 0.4)]); else { r.fills = []; K.S(r, 'strokes', [K.P(T.ln)]); r.strokeWeight = 1.5; r.strokeAlign = 'INSIDE'; } } }
+  return g;
+};
+// range: maturity bands (like TRL 1–9). rows [{label, from, to, note}], of:9, labelW, segW
+B.range = async (par, b, { T }) => {
+  const of = b.of || 9, lw = b.labelW || 420, sw = b.segW || 56; const L = K.f(par, { name: 'range', dir: 'VERTICAL', gap: b.gap ?? 16 }); if (inAL(par)) K.fillW(L);
+  if (b.axis !== false) { const h = K.f(L, { dir: 'HORIZONTAL', gap: 24, alignC: 'CENTER' }); K.fillW(h); K.f(h, { w: lw, h: 1 }); const nums = K.f(h, { dir: 'HORIZONTAL', gap: 6 }); for (let i = 1; i <= of; i++) await K.t(nums, String(i), 'label', T.t3, { w: sw, align: 'CENTER', raw: true }); }
+  for (const r of b.rows) {
+    const row = K.f(L, { dir: 'HORIZONTAL', gap: 24, alignC: 'CENTER' }); K.fillW(row); await K.t(row, r.label, 'body-s', T.tc, { w: lw });
+    const bar = K.f(row, { dir: 'HORIZONTAL', gap: 6 }); for (let i = 1; i <= of; i++) { const s = figma.createRectangle(); bar.appendChild(s); s.resize(sw, 14); s.cornerRadius = 3; const on = i >= r.from && i <= r.to; K.S(s, 'fills', [K.P(on ? T.tc : T.ln, on ? 1 : 0.5)]); }
+    if (r.note) await K.t(row, r.note, 'note', T.t2, { hug: true });
+  }
+  return L;
+};
+
 // ---------- process / time ----------
 B.steps = async (par, b, ctx) => {
   const { T } = ctx;
@@ -553,6 +591,24 @@ D.illus.circuit = async (slide, T) => {
   for (let i = 0; i < 4; i++) ring(860, ys[i], 48, T.t2);
   for (const [x, t] of [[250, 't1'], [420, 't2'], [580, 't3'], [750, 't4']]) await K.t(il, t, 'label', T.t3, { x: x - 12, y: ys[0] - 90, raw: true });
   return il;
+};
+// X5 report illustrations (vector, from design-code slide «иллюстрации и поля»): sphere · landscape · contours · atom · field · network · barcode-sphere
+D.illusSvg = {}; // injected by the server for the names used
+const illusPlace = {
+  sphere: { x: 1000, y: 300, w: 860 }, landscape: { x: 1000, y: 300, w: 860 }, contours: { x: 1000, y: 300, w: 860 },
+  atom: { x: 1000, y: 280, w: 860 }, field: { x: 960, y: 420, w: 960 }, network: { x: 1000, y: 330, w: 860 }, 'barcode-sphere': { x: 240, y: 0, w: 1920 },
+};
+const illusSvgFor = (name, T, slide) => {
+  let svg = D.illusSvg[name]; if (!svg) throw new Error('unknown illus "' + name + '". Known: ' + Object.keys(illusPlace).join(', ') + ', circuit, bloch, none');
+  if (!T.dark) {
+    const f = slide.fills && slide.fills[0]; const bgc = f && f.color ? hexOf(f.color) : '#F4F0E8';
+    svg = svg.replace(/stroke="white"/g, 'stroke="#0A0A0C"').replace(/fill="white"/g, 'fill="#0A0A0C"').replace(/#C6D0DC/g, '#475161').replace(/#94A3B8/g, '#6B7686').replace(/#2A2C33/g, bgc).replace(/#CC0000/g, '#B80000');
+  }
+  return svg;
+};
+for (const name of Object.keys(illusPlace)) D.illus[name] = async (slide, T) => {
+  const n = figma.createNodeFromSvg(illusSvgFor(name, T, slide)); slide.appendChild(n); slide.insertChild(0, n); n.name = 'illus/' + name;
+  const p = illusPlace[name]; n.rescale(p.w / n.width); n.x = p.x; n.y = p.y;
 };
 D.illus.bloch = async (slide, T) => {
   const il = figma.createFrame(); slide.appendChild(il); il.name = 'illus/bloch'; il.fills = []; il.resize(900, 1080); il.x = 1020; il.y = 0; il.clipsContent = true;

@@ -35,4 +35,5 @@ description: This skill should be used when the user asks to make, rebuild or fi
 - `references/dsl.md` — все блоки и параметры (читать перед первой спецификацией).
 - `references/patterns.md` — рецепты 23 типов слайдов, отличия отчёта от питча.
 - `references/quality.md` — чек-лист проверки и классы прошлых ошибок.
-- `examples/pitch-deck-accelerator.jsonl` — 18 готовых спецификаций.
+- `examples/pitch-deck-accelerator.jsonl` — 18 спецификаций питча (проще и легче).
+- `examples/report-x5.jsonl` — 8 слайдов отчёта в стиле X5 (обложка-иллюстрация, содержание, вход в главу, хаб, зрелость, матрица, кейсы, источники) — **эталон стиля для отчётов**.

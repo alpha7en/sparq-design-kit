@@ -3,13 +3,14 @@
 ## Компоненты
 | набор | что | свойства |
 |---|---|---|
-| `sparq/card/title` | 9 обложек: typo · dark (серия автора), typo-circuit · dark (explain), typo · red (дайджест), rubric-number · dark (рубрики), photo-full / photo-window · dark (новость с фото), person · dark (персона), duo · dark (интервью), sci-plate · light (научный рисунок) | title, series / subtitle / issue, name, regalia; фото — слой `photo` |
-| `sparq/card/body` | 25 тел (kind × tone) | title, counter `|n/N⟩`, text, source (скрыт), number (hero), who/role (quote), bubble; графики «график XL/L/M/SW/SN» |
-| `sparq/bg` | 23 фона | dark-ring, dark-orbit, dark-crosshair, dark-dots, dark-wires, dark-haze, dark-gradient, dark-circuit, dark-ticks, glass-orb, glass-bolt, light-paper, light-frost, light-grid, red, red-deep, cover-* … |
-| `sparq/rubric`, `sparq/tag`, `sparq/series`, `sparq/topic`, `sparq/country`, `sparq/status`, `sparq/meta` | плашки и теги шапки | label |
+| `sparq/card/title` | 9 обложек: typo · dark (серия автора), typo-circuit · dark (explain), typo · red (дайджест), rubric-number · dark, photo-full / photo-window · dark (новость с фото), person · dark, duo · dark, sci-plate · light | title, series / subtitle / issue, name, regalia; фото — слой `photo` |
+| `sparq/card/body` | 25 тел (kind × tone) | title, counter `|n/N⟩`, text, source (скрыт), number (hero), who/role (quote), bubble; списки — `items` |
+| `sparq/bg` | 29 фонов — см. «Фоны и обложки» | — |
+| `sparq/rubric`, `tag`, `series`, `topic`, `country`, `status`, `meta` | плашки и теги шапки | label |
 | `sparq/chart/*` | 16 типов графиков по размерам слотов | — |
-| `sparq/icon/*` | одобренные иконки | — |
-Точные имена — `sparq_catalog {what:"cards"}`.
+| `sparq/icon/*` | 59 иконок (line / solid) | — |
+| `sparq/icon-plate` | плашка с иконкой (raised · outline · accent, 72/96) | icon |
+Точные имена — `sparq_catalog {what:"cards"}` и `{what:"card-icons"}`.
 
 ## Какую карточку взять (норма слов)
 | содержание | kind · tone | слов |
@@ -25,40 +26,67 @@
 | одна цифра решает | hero · dark / red | ≤ 30 |
 | позиция, слова | quote · glass / light | ≤ 45 |
 | вывод, «кому подойдёт» | bubble | 7–41 |
-| 3–5 механизмов | list · dark / light | ≤ 60 |
+| 3–4 механизма, применения, контуры | list · dark / light (с иконками) | ≤ 60 |
 | кейс страны/компании | case | ≤ 70 |
 | две модели рядом | two-sections | 2 × ≤ 35 |
 | сравнение позиций | table | ≤ 30 |
 | не влезло | continue | ≤ 85 |
 | итог / финал | final-figures / final-tail · red | ≤ 60 |
-Обложка: тема шире 936 px → следующий тир заголовка (cover-l → cover-m → cover-s), не переносить слово. Заголовки карточек — строчными, 1–3 слова, без точки, имя явления, а не рубрикатор.
+Заголовок обложки подбирается сам (cover-l → m → s, пока слово не рвётся). Заголовки карточек — строчными, 1–3 слова, без точки, имя явления.
 
-## Ритм и фоны
-- Фон под содержание, шапка под фон. Декор держит ≥ 48 px от шапки (рубрика + знак, y 72–128), заголовка, текста, стекла, графика.
-- Текст сверху, низ свободен → dark-ring / orbit / crosshair / dots / wires. Контент до низа → dark-haze / gradient / circuit / ticks. Стекло → glass-orb / glass-bolt. Обложка → cover-*.
-- ≤ 2 одинаковых фона подряд; 1–2 светлых; ≤ 1 красной; хотя бы одна стеклянная и одна светлая в карусели; плоские тёмные — не больше двух подряд.
-- Обложка новости — с изображением предмета; типографская — для серий и explain. Чужие логотипы как есть не вставлять.
-- Не все карточки по 50+ слов: 1–2 лёгкие (цитата, одно число, простая схема), лучше на 2–3 позиции.
-- Один герой на карточку; неон ≤ 2 элементов и никогда на тексте; знак — только на обложке, на остальных — счётчик.
+## Фоны и обложки
+**Главное правило: пятен и ярких красных точек на фонах нет.** Размытая красная дымка, красные шары, «стекло на красном пятне», светящиеся красные точки-узлы — запрещены (замечание заказчика повторялось много раз). Глубину дают тонкие линии, кольца, сетки; красный — тонкая линия или одна неоновая дуга обложки. Пятно допустимо только как едва заметная подсветка внутри отдельной плашки, не как фон карточки (`allowBlotch:true`, и только осознанно).
 
-## Шаблоны каруселей (основа, не клетка)
-| шаблон | последовательность (kind · фон · график) |
+`sparq_cards` подбирает фон сам (`bg` не указан или `"auto"`): по роли карточки, с ротацией (не повторяя последние два), и сам меняет фон, если декор налезает на текст. Явно указанный пятнистый фон (`dark-haze`, `dark-gradient`, `glass-orb`, `glass-bolt`) заменяется, в ответе — заметка.
+
+| роль | пул фонов |
 |---|---|
-| аналитика рынка | title typo · cover-ring → text-m · dark-haze → graphic-L · dark-haze · barH L → graphic-SW · dark-haze · donut/timeline SW → hero · red → graphic-XL · dark-ticks · sankey/line/barV XL → final-figures · dark-ring |
-| кейсы стран | title typo · cover-ring → text-s · dark-ring → case · dark-haze (кикер «кейс · страна») → case · dark-circuit → table · dark-haze → final-tail · red |
-| explain | title typo-circuit · cover-circuit → text-m light · light-paper (определение) → two-sections · dark-ticks → list · dark-circuit (3–5 применений с иконками) → bubble · dark-haze → final-tail · red |
-| персона | title person · cover-circuit → text-m · dark-haze → quote light · light-paper → graphic-L · dark-ticks · timeline L → final-tail · red |
-Карточки добавлять, убирать и менять под блоки брифа.
+| текст сверху, низ свободен (text-s/m/l, quote) | dark-ring, dark-orbit, dark-crosshair, dark-dots, dark-wires, dark-field |
+| контент до низа (график, список, таблица, case, hero, bubble, финал) | dark-circuit, dark-ticks, dark-crosshair, dark-wires |
+| светлая | light-paper, light-frost, light-grid |
+| красная | red, red-deep |
+| обложка общая | cover-ring (неон, одобрено), cover-orbit, cover-interference, cover-circuit, cover-supremat, cover-bolt; красная — cover-red-ring |
+
+### Обложки-иллюстрации (из отчёта X5): выбирай по теме, а не по кругу
+Задаются `bg` у `kind:"typo"`. Иллюстрация живёт между шапкой и заголовком.
+| bg | о чём | когда |
+|---|---|---|
+| `cover-sphere` | сфера Блоха: кубит, состояния, суперпозиция | объяснение понятий, введение в тему |
+| `cover-landscape` | энергетический ландшафт: минимумы, туннелирование, решение | оптимизация, отжиг, вычисления |
+| `cover-contours` | контуры PQC и КРК | защита данных, криптография, связь |
+| `cover-atom` | атом и кольца интерференции | сенсоры, физика, измерения |
+| `cover-network` | карта сети: узлы и магистраль | кейс, инфраструктура, маршрут |
+| `cover-barcode` | штрихкод → сфера | отчёт, аналитика, серия |
+В иллюстрациях красный — один акцент по смыслу (вектор состояния, решение, хаб); на фонах без иллюстраций красных точек нет.
+
+### Ритм
+≤ 2 одинаковых фона подряд; 1–2 светлые; ≤ 1 красная; красная — финал, число-герой или обложка дайджеста. Обложка тематическая (иллюстрация) для explain и аналитики, типографская — для серий. Чужие логотипы как есть не вставлять.
+
+## Иконки и знаки — использовать, а не обходить
+- **Списки** (`kind:"list"`, до 4 пунктов): `items:[{icon,title,note}]` — иконка у каждого пункта обязательна. Подбор по смыслу: chip процессор · shield защита/ошибки · lock/lock-pqc/key/qkd криптография · atom/qubit/bloch физика · navigation маршрут · clock время · money/invest/growth деньги · gov/bank/university организации · people люди · globe/satellite/fiber/node связь. Полный список — `sparq_catalog {what:"card-icons"}`.
+- **Плашка-иконка**: `plate:{icon,tone:"raised|outline|accent",size:72|96,x,y}` — когда карточка почти пустая или нужен знак темы. Карточка при этом отсоединяется от компонента.
+- **Знаки шапки**: `rubric` (формат поста), `kicker` (кейс · страна), счётчик `|n/N⟩`, теги topic/country/status.
+- Не рисуй иконки сам и не бери эмодзи.
+
+## Шаблоны каруселей (основа, не клетка; живые образцы — страница системы, раздел 09)
+| шаблон | последовательность (kind · фон · график/иконки) |
+|---|---|
+| 1 · аналитика рынка | typo · cover-barcode → text-m → graphic-L · barH → graphic-SW · donut → hero · red → graphic-XL · sankey → final-figures |
+| 2 · кейсы стран | typo · cover-network → text-s → case (kicker «кейс · ЕС») → case → table → final-tail · red |
+| 3 · explain | typo · cover-sphere → text-m · light → two-sections → list · 4 иконки → bubble → final-tail · red |
+| 4 · персона / history | person → text-m → quote · light → graphic-L · timeline → final-tail · red |
+| 5 · оптимизация и вычисления | typo · cover-landscape → text-m → list · 3 иконки → hero → final-tail · red |
+| 6 · защита данных | typo · cover-contours → text-m → list · 4 иконки (lock-pqc, qkd, key, shield) → graphic-L · barV → final-tail · red |
+Спецификации всех шести — `examples/carousel-templates.jsonl`. Блоки меняй под бриф.
 
 ## Проверка
-`O.lint()` (в ответе `sparq_cards`) ловит: декор под контентом, текст < 64 px от края, кегль < 28, наезды и зазоры < 12, текст на тексте, текст у края стекла, перенос внутри слова. Ложные: «+» в узле блок-схемы, цифры в ярусах пирамиды. Контраст на градиентах считать по таблице: белый на #CC0000 — 5.9 (коротко); ink на красном — запрещено; frost-500 на светлом — запрещено для текста.
+В ответе `sparq_cards`: `lint` (декор под контентом, текст < 64 px от края, кегль < 28, наезды, перенос внутри слова) и `notes` (замена фона, уменьшение заголовка, пустой низ). Ложные срабатывания: «+» в узле блок-схемы, цифры в ярусах пирамиды. `notes` про пустой низ — повод добавить график, `items` или `plate`, либо взять kind=hero/quote. Контраст: белый на #CC0000 — 5.9 (коротко); ink на красном — запрещено; frost-500 на светлом — запрещено для текста.
 
 ## Ловушки Figma (проверено)
-- Текстовые свойства набора в инстансе = значение по умолчанию → тексты задавать явно.
-- В инстанс нельзя вставить слой → для графика по данным карточку отсоединяют (`O.chart` делает сам); после `detachInstance()` фон `bg` теряет ABSOLUTE — вернуть `bg.layoutPositioning='ABSOLUTE'; bg.x=0; bg.y=0`.
+- Свойства набора в инстансе = значение по умолчанию → тексты задавать явно. Два слоя с одним именем (`text` в two-sections, bubble): `texts:{"text":…,"text#2":…}`.
+- В инстанс нельзя вставить слой → для графика/плашки карточку отсоединяют (делает инструмент); после `detachInstance()` фон `bg` теряет ABSOLUTE — инструмент возвращает.
+- `fills` с переменной в экспорте может читаться чёрным — для вариантов фонов цвета задаются явно.
 - Прозрачность заливки с переменной — присваивать дважды; стили — через `set…StyleIdAsync`.
 - У JetBrains Mono нет SemiBold — жирное только в Onest/Unbounded.
-- Декор фона-инстанса нельзя двигать — только visible/opacity; сдвиг — после detach фона.
-- Пилюли и плашки с подписью — фреймы с автолейаутом, не прямоугольник + текст.
-- Экспорт целой карусели одним вызовом слишком тяжёл — по одной карточке.
-- Id узлов между сессиями меняются — искать по именам.
+- Повторные `loadFontAsync` в одном вызове душат Figma — шрифты кэшируются (в инструменте уже сделано); за вызов ≤ 3 карточки.
+- Id узлов между сессиями меняются — искать по именам. Экспорт целой карусели одним вызовом тяжёл — по одной карточке.
