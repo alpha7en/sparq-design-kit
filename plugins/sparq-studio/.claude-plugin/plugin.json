@@ -1,6 +1,6 @@
 {
   "name": "sparq-studio",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "SPARQ design studio for Figma: presentations (1920×1080) and Telegram card carousels (1080²) in the SPARQ style. Bundles its own Figma bridge MCP server, the sealed design system (tokens, components, slide DSL, chart generators), quality checks and editorial rules.",
   "author": { "name": "SPARQ team" },
   "keywords": ["figma", "design-system", "presentations", "slides", "telegram", "cards", "sparq"]

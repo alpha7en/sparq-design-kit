@@ -375,7 +375,7 @@ return all.filter(s=>!keys||keys.includes(s.getSharedPluginData('sparqdeck','key
 				const list = (data.comments || []).filter((c: any) => includeResolved || !c.resolved_at);
 				const nodeIds = [...new Set(list.map((c: any) => c.client_meta && c.client_meta.node_id).filter(Boolean))];
 				const where: Record<string, any> = nodeIds.length ? await run(ctx, `const out={};for(const id of ${lit(nodeIds)}){const n=await figma.getNodeByIdAsync(id);if(!n){out[id]=null;continue}let p=n,key='';while(p&&p.type!=='PAGE'){key=p.getSharedPluginData&&p.getSharedPluginData('sparqdeck','key')||key;if(p.type==='SLIDE'||(p.parent&&p.parent.type==='PAGE'))break;p=p.parent}const t=n.type==='TEXT'?n:(n.findOne?n.findOne(x=>x.type==='TEXT'):null);out[id]={slide:key||(p&&p.name),node:n.name,type:n.type,text:t?t.characters.slice(0,80):null}}return out;`, key, 15000) : {};
-				return ok(list.map((c: any) => ({ id: c.id, at: c.created_at.slice(0, 16), by: c.user && c.user.handle, msg: c.message, reply: !!c.parent_id, ...(c.client_meta && c.client_meta.node_id ? { ...(where[c.client_meta.node_id] || {}), offset: c.client_meta.node_offset } : {}) })));
+				return ok(list.map((c: any) => ({ id: c.id, at: c.created_at.slice(0, 16), by: c.user && c.user.handle, msg: c.message, reply: !!c.parent_id, ...(c.client_meta && c.client_meta.node_id ? { ...(where[c.client_meta.node_id] || { note: "элемент уже удалён или пересобран — найти место по смыслу комментария и скриншоту" }), offset: c.client_meta.node_offset } : {}) })));
 			} catch (e: any) { return fail(e.message); }
 		},
 	);
