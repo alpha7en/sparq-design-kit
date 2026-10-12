@@ -8,7 +8,7 @@ Claude сам собирает в Figma **презентации** (1920×1080) 
 2. **Figma Desktop** — figma.com/downloads (браузерная версия не подходит).
 3. **Плагин в Claude Desktop** (вкладка Code), в поле ввода:
    ```
-   /plugin marketplace add <github-владелец>/sparq-design-kit
+   /plugin marketplace add alpha7en/sparq-design-kit
    /plugin install sparq-studio@sparq
    ```
    Перезапустить Claude Desktop.
