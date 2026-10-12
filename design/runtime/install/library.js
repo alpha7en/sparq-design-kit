@@ -1,8 +1,10 @@
 // SPARQ Studio · component library installer (Figma plugin sandbox)
 // Rebuilds component sets from a snapshot (tools/figma/snapshot-library.js) on a page of the
 // current file, with variants, component properties, nested instances, style/variable bindings.
-// Globals: ITEMS (snapshot items, dependency-ordered), PAGE_NAME, REPLACE (bool)
-// Returns { installed:[names], skipped:[names], warnings:[] }
+// Globals: ITEMS (snapshot items, dependency-ordered), PAGE_NAME, REPLACE (bool), BUDGET_MS (optional)
+// Works in time slices: stops after BUDGET_MS and remembers a half-built set in page plugin data,
+// so the server can call it again with the remaining items.
+// Returns { installed:[names], skipped:[names], warnings:[], done:bool }
 
 await figma.loadAllPagesAsync();
 let page = figma.root.children.find(p => p.name === PAGE_NAME);
@@ -156,15 +158,21 @@ function bindRefs(s, n, keyOf) {
   if (s.ch && s.t !== 'INSTANCE' && 'children' in n) s.ch.forEach((c, i) => n.children[i] && bindRefs(c, n.children[i], keyOf));
 }
 
-// place sets in a simple grid by section so the page stays readable for humans
-let cursor = { x: 0, y: 0, rowH: 0 };
-const existingBottom = page.children.reduce((m, c) => Math.max(m, c.y + c.height), 0);
-cursor.y = existingBottom ? existingBottom + 200 : 0;
 const installed = [], skipped = [];
+const START = Date.now(); const BUDGET = typeof BUDGET_MS === 'undefined' ? 20000 : BUDGET_MS;
+let state = JSON.parse(page.getPluginData('install') || 'null');
+// orphan variants from an interrupted run (root-level components named like variants, not in state)
+for (const c of page.children.slice()) if (c.type === 'COMPONENT' && c.name.includes('=') && !(state && state.ids.includes(c.id))) c.remove();
 for (const it of ITEMS) {
-  if (owners[it.name]) { if (!REPLACE) { skipped.push(it.name); continue; } owners[it.name].remove(); }
-  const comps = [];
-  for (const v of it.variants) { const c = await make(v, page); if (v.desc) c.description = v.desc; comps.push(c); }
+  const resuming = state && state.name === it.name;
+  if (owners[it.name] && !resuming) { if (!REPLACE) { skipped.push(it.name); continue; } owners[it.name].remove(); delete owners[it.name]; }
+  let comps = [];
+  if (resuming) for (const id of state.ids) { const n = await figma.getNodeByIdAsync(id); if (n) comps.push(n); }
+  for (let i = comps.length; i < it.variants.length; i++) {
+    if (Date.now() - START > BUDGET) { page.setPluginData('install', JSON.stringify({ name: it.name, ids: comps.map(c => c.id) })); return { installed, skipped, warnings, done: false, pending: it.name, at: i + '/' + it.variants.length }; }
+    const v = it.variants[i]; const c = await make(v, page); if (v.desc) c.description = v.desc; c.x = -20000; c.y = i * 10; comps.push(c);
+  }
+  page.setPluginData('install', ''); state = null;
   let owner;
   if (it.kind === 'set') {
     owner = figma.combineAsVariants(comps, page); owner.name = it.name;
@@ -175,7 +183,6 @@ for (const it of ITEMS) {
     if (sf.cr) owner.cornerRadius = sf.cr;
   } else owner = comps[0];
   if (it.desc) owner.description = it.desc;
-  // component properties (non-variant)
   const keyOf = {};
   for (const [name, d] of Object.entries(it.props || {})) {
     if (d.type === 'VARIANT') continue;
@@ -187,9 +194,13 @@ for (const it of ITEMS) {
   comps.forEach((c, i) => bindRefs(it.variants[i], c, keyOf));
   for (let i = 0; i < comps.length; i++) await finishInstances(it.variants[i], comps[i]);
   owners[it.name] = owner;
-  // grid placement
-  if (cursor.x > 0 && cursor.x + owner.width > 9000) { cursor.x = 0; cursor.y += cursor.rowH + 160; cursor.rowH = 0; }
-  owner.x = cursor.x; owner.y = cursor.y; cursor.x += owner.width + 160; cursor.rowH = Math.max(cursor.rowH, owner.height);
+  // place sets in rows under the existing content (readable for humans)
+  const bottom = page.children.filter(c => c !== owner && c.x > -10000).reduce((m, c) => Math.max(m, c.y + c.height), -200);
+  const lastRow = page.children.filter(c => c !== owner && c.x > -10000 && c.y + c.height > bottom - 1);
+  const rowRight = lastRow.reduce((m, c) => Math.max(m, c.x + c.width), -160);
+  if (rowRight + 160 + owner.width < 9000 && lastRow.length) { const top = Math.min(...lastRow.map(c => c.y)); owner.x = rowRight + 160; owner.y = top; }
+  else { owner.x = 0; owner.y = bottom + 200; }
   installed.push(it.name);
+  if (Date.now() - START > BUDGET) return { installed, skipped, warnings, done: false };
 }
-return { installed, skipped, warnings, page: page.id };
+return { installed, skipped, warnings, done: true, page: page.id };

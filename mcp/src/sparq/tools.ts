@@ -137,8 +137,9 @@ export function registerSparqTools(server: McpServer, ctx: Ctx) {
 			fileKey: z.string().optional(),
 			library: z.boolean().optional().describe("cards only: rebuild the component library page (default true when missing)"),
 			replaceLibrary: z.boolean().optional().describe("cards only: delete and rebuild existing component sets (after a library update)"),
+			libraryPage: z.string().optional().describe("testing only: install the library into this page name"),
 		},
-		async ({ kit, fileKey, library, replaceLibrary }) => {
+		async ({ kit, fileKey, library, replaceLibrary, libraryPage }) => {
 			const report: any = { kitVersion: KIT_VERSION };
 			try {
 				const editor = await run(ctx, "return figma.editorType;", fileKey, 5000);
@@ -157,21 +158,26 @@ export function registerSparqTools(server: McpServer, ctx: Ctx) {
 					const code: Record<string, string> = {};
 					for (const k of ["ops", "lib", "lib2", "lib3", "charts", "charts2", "fx", "lint", "chartdata", "mark"]) code[k] = asset(`runtime/cards/${k}.js`);
 					await run(ctx, `const C=${lit(code)};for(const k in C)figma.root.setSharedPluginData('sparq',k,C[k]);figma.root.setSharedPluginData('sparq','kitVersion',${lit(KIT_VERSION)});return Object.keys(C).length;`, fileKey);
-					const has = await run(ctx, `await figma.loadAllPagesAsync();return !!figma.root.children.find(p=>p.name.startsWith('SPARQ · система'));`, fileKey, 8000);
+					const LPAGE = libraryPage || 'SPARQ · система 1:1 (всё здесь)';
+					const libNames: string[] = json("library/cards.json").items.map((i: any) => i.name);
+					const present: string[] = await run(ctx, `await figma.loadAllPagesAsync();const p=figma.root.children.find(p=>p.name.startsWith(${lit(libraryPage || 'SPARQ · система')}));if(!p)return [];await p.loadAsync();return p.findAll(n=>n.type==='COMPONENT_SET'||(n.type==='COMPONENT'&&n.parent.type!=='COMPONENT_SET'&&!n.name.includes('='))).map(n=>n.name);`, fileKey, 15000);
+					const has = libNames.every(n => present.includes(n));
 					if (library !== false && (!has || replaceLibrary)) {
 						const lib = json("library/cards.json");
 						const items: any[] = lib.items;
 						const count = (s: any): number => 1 + (s.ch || []).reduce((a: number, c: any) => a + count(c), 0);
-						const batches: any[][] = []; let cur: any[] = []; let n = 0;
-						for (const it of items) { const c = it.variants.reduce((a: number, v: any) => a + count(v), 0); if (n + c > 400 && cur.length) { batches.push(cur); cur = []; n = 0; } cur.push(it); n += c; }
-						if (cur.length) batches.push(cur);
-						const installed: string[] = []; const warnings: string[] = [];
-						for (const b of batches) {
-							const r = await run(ctx, `const ITEMS=${lit(b)};const PAGE_NAME='SPARQ · система 1:1 (всё здесь)';const REPLACE=${!!replaceLibrary};\nreturn ${mod("runtime/install/library.js")};`, fileKey, 30000);
+						let remaining: any[] = items.slice(); const installed: string[] = []; const warnings: string[] = []; let calls = 0;
+						while (remaining.length && calls < 120) {
+							calls++;
+							const win: any[] = []; let n = 0;
+							for (const it of remaining) { const c = it.variants.reduce((a: number, v: any) => a + count(v), 0); if (win.length && n + c > 700) break; win.push(it); n += c; }
+							const r = await run(ctx, `const ITEMS=${lit(win)};const PAGE_NAME=${lit(LPAGE)};const REPLACE=${!!replaceLibrary};const BUDGET_MS=18000;\nreturn ${mod("runtime/install/library.js")};`, fileKey, 30000);
 							installed.push(...r.installed); warnings.push(...r.warnings);
+							const doneNames = new Set([...r.installed, ...r.skipped]);
+							remaining = remaining.filter(it => !doneNames.has(it.name));
 						}
-						report.library = { sets: installed.length, batches: batches.length, warnings: warnings.slice(0, 12), warningsTotal: warnings.length };
-					} else report.library = has ? "already present (pass replaceLibrary:true to rebuild)" : "skipped";
+						report.library = { sets: installed.length, calls, left: remaining.map((i: any) => i.name), warnings: warnings.slice(0, 12), warningsTotal: warnings.length };
+					} else report.library = has ? "complete (pass replaceLibrary:true to rebuild)" : "skipped";
 					report.cards = "installed";
 				}
 				return ok(report);

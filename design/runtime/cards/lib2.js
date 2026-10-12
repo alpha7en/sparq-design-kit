@@ -1,8 +1,9 @@
 
-const VID={bg:'VariableID:6:2270',bgr:'VariableID:6:2271',light:'VariableID:6:2272',accent:'VariableID:6:2274',td:'VariableID:6:2276',td2:'VariableID:6:2277',tl:'VariableID:6:2278',tl2:'VariableID:6:2279',ta:'VariableID:6:2280',red:'VariableID:6:2281',deep:'VariableID:6:2282',paper:'VariableID:6:2267',white:'VariableID:6:2268',ink:'VariableID:6:2257'};
-const V={};for(const k in VID)V[k]=await figma.variables.getVariableByIdAsync(VID[k]);
+// SPARQ Studio: variables and styles are resolved by NAME (ids differ in every file).
+const VNAME={bg:'bg/dark',bgr:'bg/dark-raised',light:'bg/light',accent:'bg/accent',td:'text/on-dark',td2:'text/on-dark-2',tl:'text/on-light',tl2:'text/on-light-2',ta:'text/on-accent',red:'accent/primary',deep:'accent/deep',paper:'prim/paper',white:'prim/white',ink:'prim/ink-950'};
+const V={};{const col=(await figma.variables.getLocalVariableCollectionsAsync()).find(c=>c.name==='sparq/color');const all=await figma.variables.getLocalVariablesAsync();for(const k in VNAME)V[k]=all.find(v=>v.variableCollectionId===col.id&&v.name===VNAME[k]);}
 const VP=(k,o=1)=>{const p=figma.variables.setBoundVariableForPaint({type:'SOLID',color:{r:0,g:0,b:0}},'color',V[k]);return {...p,opacity:o}};
-const FX=JSON.parse(figma.root.getSharedPluginData('sparq','fx'));
+const FX={};{const FXN=JSON.parse(figma.root.getSharedPluginData('sparq','fx'));const all=[...await figma.getLocalEffectStylesAsync(),...await figma.getLocalPaintStylesAsync()];for(const k in FXN){const st=all.find(x=>x.name===FXN[k]);FX[k]=st?st.id:null}}
 const ST={};for(const s of await figma.getLocalTextStylesAsync())ST[s.name]=s;
 const setV=(n,k,o=1,prop='fills')=>{n[prop]=[VP(k)];if(o<1)n[prop]=[{...n[prop][0],opacity:o}]};
 const AL=(par,name,dir,o={})=>{const f=figma.createFrame();f.name=name;f.layoutMode=dir;f.fills=o.fill||[];f.itemSpacing=o.gap??0;const p=o.pad??0;if(Array.isArray(p)){f.paddingTop=p[0];f.paddingRight=p[1];f.paddingBottom=p[2];f.paddingLeft=p[3]}else{f.paddingTop=f.paddingRight=f.paddingBottom=f.paddingLeft=p}f.cornerRadius=o.r||0;f.clipsContent=!!o.clip;if(par)par.appendChild(f);if(o.w&&o.h){f.resize(o.w,o.h);f.primaryAxisSizingMode='FIXED';f.counterAxisSizingMode='FIXED'}else{f.primaryAxisSizingMode='AUTO';f.counterAxisSizingMode='AUTO'}if(o.align)f.counterAxisAlignItems=o.align;if(o.justify)f.primaryAxisAlignItems=o.justify;return f};

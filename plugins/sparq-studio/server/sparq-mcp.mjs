@@ -85272,8 +85272,9 @@ function registerSparqTools(server, ctx) {
     kit: external_exports.enum(["deck", "cards", "both"]),
     fileKey: external_exports.string().optional(),
     library: external_exports.boolean().optional().describe("cards only: rebuild the component library page (default true when missing)"),
-    replaceLibrary: external_exports.boolean().optional().describe("cards only: delete and rebuild existing component sets (after a library update)")
-  }, async ({ kit, fileKey, library, replaceLibrary }) => {
+    replaceLibrary: external_exports.boolean().optional().describe("cards only: delete and rebuild existing component sets (after a library update)"),
+    libraryPage: external_exports.string().optional().describe("testing only: install the library into this page name")
+  }, async ({ kit, fileKey, library, replaceLibrary, libraryPage }) => {
     const report = { kitVersion: KIT_VERSION };
     try {
       const editor = await run(ctx, "return figma.editorType;", fileKey, 5e3);
@@ -85294,37 +85295,39 @@ function registerSparqTools(server, ctx) {
         for (const k2 of ["ops", "lib", "lib2", "lib3", "charts", "charts2", "fx", "lint", "chartdata", "mark"])
           code[k2] = asset(`runtime/cards/${k2}.js`);
         await run(ctx, `const C=${lit(code)};for(const k in C)figma.root.setSharedPluginData('sparq',k,C[k]);figma.root.setSharedPluginData('sparq','kitVersion',${lit(KIT_VERSION)});return Object.keys(C).length;`, fileKey);
-        const has = await run(ctx, `await figma.loadAllPagesAsync();return !!figma.root.children.find(p=>p.name.startsWith('SPARQ \xB7 \u0441\u0438\u0441\u0442\u0435\u043C\u0430'));`, fileKey, 8e3);
+        const LPAGE = libraryPage || "SPARQ \xB7 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 1:1 (\u0432\u0441\u0451 \u0437\u0434\u0435\u0441\u044C)";
+        const libNames = json("library/cards.json").items.map((i) => i.name);
+        const present = await run(ctx, `await figma.loadAllPagesAsync();const p=figma.root.children.find(p=>p.name.startsWith(${lit(libraryPage || "SPARQ \xB7 \u0441\u0438\u0441\u0442\u0435\u043C\u0430")}));if(!p)return [];await p.loadAsync();return p.findAll(n=>n.type==='COMPONENT_SET'||(n.type==='COMPONENT'&&n.parent.type!=='COMPONENT_SET'&&!n.name.includes('='))).map(n=>n.name);`, fileKey, 15e3);
+        const has = libNames.every((n) => present.includes(n));
         if (library !== false && (!has || replaceLibrary)) {
           const lib = json("library/cards.json");
           const items = lib.items;
           const count = (s2) => 1 + (s2.ch || []).reduce((a2, c) => a2 + count(c), 0);
-          const batches = [];
-          let cur = [];
-          let n = 0;
-          for (const it2 of items) {
-            const c = it2.variants.reduce((a2, v) => a2 + count(v), 0);
-            if (n + c > 400 && cur.length) {
-              batches.push(cur);
-              cur = [];
-              n = 0;
-            }
-            cur.push(it2);
-            n += c;
-          }
-          if (cur.length)
-            batches.push(cur);
+          let remaining = items.slice();
           const installed = [];
           const warnings = [];
-          for (const b2 of batches) {
-            const r = await run(ctx, `const ITEMS=${lit(b2)};const PAGE_NAME='SPARQ \xB7 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 1:1 (\u0432\u0441\u0451 \u0437\u0434\u0435\u0441\u044C)';const REPLACE=${!!replaceLibrary};
+          let calls = 0;
+          while (remaining.length && calls < 120) {
+            calls++;
+            const win = [];
+            let n = 0;
+            for (const it2 of remaining) {
+              const c = it2.variants.reduce((a2, v) => a2 + count(v), 0);
+              if (win.length && n + c > 700)
+                break;
+              win.push(it2);
+              n += c;
+            }
+            const r = await run(ctx, `const ITEMS=${lit(win)};const PAGE_NAME=${lit(LPAGE)};const REPLACE=${!!replaceLibrary};const BUDGET_MS=18000;
 return ${mod("runtime/install/library.js")};`, fileKey, 3e4);
             installed.push(...r.installed);
             warnings.push(...r.warnings);
+            const doneNames = /* @__PURE__ */ new Set([...r.installed, ...r.skipped]);
+            remaining = remaining.filter((it2) => !doneNames.has(it2.name));
           }
-          report.library = { sets: installed.length, batches: batches.length, warnings: warnings.slice(0, 12), warningsTotal: warnings.length };
+          report.library = { sets: installed.length, calls, left: remaining.map((i) => i.name), warnings: warnings.slice(0, 12), warningsTotal: warnings.length };
         } else
-          report.library = has ? "already present (pass replaceLibrary:true to rebuild)" : "skipped";
+          report.library = has ? "complete (pass replaceLibrary:true to rebuild)" : "skipped";
         report.cards = "installed";
       }
       return ok2(report);
