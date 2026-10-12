@@ -28,4 +28,5 @@ rm -rf "$PLUGIN/design"
 mkdir -p "$PLUGIN/design"
 for d in tokens icons library runtime catalog; do cp -R "$ROOT/design/$d" "$PLUGIN/design/$d"; done
 
+cp "$ROOT/LICENSE-figma-console-mcp" "$PLUGIN/server/figma-desktop-bridge/LICENSE"
 echo "built $(du -sh "$PLUGIN" | cut -f1) → $PLUGIN"

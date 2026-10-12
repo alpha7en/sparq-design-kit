@@ -55,3 +55,7 @@ Claude сам получит все новые комментарии файла
 | мост для Figma | `plugins/sparq-studio/server/figma-desktop-bridge/` | плагин Figma «SPARQ Studio Bridge» |
 | дизайн-система | `plugins/sparq-studio/design/` | токены, иконки, библиотека 292 компонентов карточек, рантайм (движок слайдов, генераторы, проверки) |
 | исходники | `mcp/`, `design/`, `tools/` | для разработчиков: `docs/ARCHITECTURE.md`, `docs/MAINTAINING.md`, состояние по ТЗ — `docs/STATUS.md` |
+
+## Лицензия и благодарности
+
+MIT (см. `LICENSE`). MCP-сервер и мост Figma — форк [figma-console-mcp](https://github.com/southleft/figma-console-mcp) (MIT, © 2025 Figma Console MCP Contributors); лицензия оригинала — `LICENSE-figma-console-mcp`, подробности и список изменений — `NOTICE.md`, `mcp/UPSTREAM.md`.
