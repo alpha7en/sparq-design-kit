@@ -1,0 +1,5 @@
+node_modules/
+mcp/dist/
+upstream-figma-console-mcp/
+.DS_Store
+*.log

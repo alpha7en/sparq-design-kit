@@ -1,0 +1,19 @@
+
+const out=[];const cards=['FRAME','COMPONENT','INSTANCE'].includes(root.type)?[root]:root.findAll(n=>['FRAME','COMPONENT','INSTANCE'].includes(n.type)&&n.parent&&!['COMPONENT','INSTANCE','FRAME'].includes(n.parent.type)&&Math.round(n.width)===1080&&(Math.round(n.height)===1080||Math.round(n.height)===810||Math.round(n.height)===1350));
+for(const c of cards){const C=c.absoluteBoundingBox;const isBg=n=>{let p=n;while(p&&p!==c){if(/^bg/i.test(p.name))return true;p=p.parent}const b=n.absoluteBoundingBox;return b&&b.width*b.height>0.45*C.width*C.height;};
+ const leaves=c.findAll(n=>n.visible!==false&&!('children' in n&&n.children.length)&&n.absoluteBoundingBox);
+ const texts=leaves.filter(n=>n.type==='TEXT'&&!/^bg/.test(n.name));const others=leaves.filter(n=>n.type!=='TEXT'&&!isBg(n)&&(n.opacity??1)>0.2);
+ const issues=[];
+ for(const t of texts){const b=t.absoluteBoundingBox;let onGlass=false;{let p=t.parent;while(p&&p!==c){if(p.effects&&p.effects.some(e=>e.type==='BACKGROUND_BLUR'&&e.visible!==false)){onGlass=p;break}p=p.parent}}const m=Math.min(b.x-C.x,b.y-C.y,C.x+C.width-(b.x+b.width),C.y+C.height-(b.y+b.height));if(m<63)issues.push('край '+Math.round(m)+'px: «'+t.characters.slice(0,24)+'»');
+  if(t.fontSize!==figma.mixed&&t.fontSize>=28&&t.textAutoResize!=='WIDTH_AND_HEIGHT'){for(const w of t.characters.split(/[\s\n]+/).filter(Boolean)){const k=t.clone();k.textAutoResize='WIDTH_AND_HEIGHT';k.characters=w;const ww=k.width;k.remove();if(ww>t.width+1){issues.push('перенос внутри слова: «'+w+'»');break}}}
+  if(t.fontSize!==figma.mixed&&t.fontSize<28)issues.push('кегль '+t.fontSize+': «'+t.characters.slice(0,24)+'»');
+  if(onGlass){const g=onGlass.absoluteBoundingBox;const ins=Math.min(b.x-g.x,b.y-g.y,g.x+g.width-(b.x+b.width),g.y+g.height-(b.y+b.height));if(ins<(onGlass.cornerRadius>=999?8:16))issues.push('вне стекла/у края панели '+Math.round(ins)+'px: «'+t.characters.slice(0,20)+'»');}
+  for(const o of others){if(onGlass){let q=o.parent,inside=false;while(q&&q!==c){if(q===onGlass){inside=true;break}q=q.parent}if(!inside)continue;}const a=o.absoluteBoundingBox;const contains=a.x<=b.x-12&&a.y<=b.y-12&&a.x+a.width>=b.x+b.width+12&&a.y+a.height>=b.y+b.height+12;if(contains)continue;
+   const gx=Math.max(a.x-(b.x+b.width),b.x-(a.x+a.width)),gy=Math.max(a.y-(b.y+b.height),b.y-(a.y+a.height));const gap=Math.max(gx,gy);
+   if(gap<12)issues.push((gap<0?'наезд':'зазор '+Math.round(gap)+'px')+': «'+t.characters.slice(0,20)+'» ↔ '+o.type+' '+o.name.slice(0,16));}
+  for(const u of texts){if(u===t||u.id<t.id)continue;const a=u.absoluteBoundingBox;const gx=Math.max(a.x-(b.x+b.width),b.x-(a.x+a.width)),gy=Math.max(a.y-(b.y+b.height),b.y-(a.y+a.height));if(Math.max(gx,gy)<0)issues.push('текст на тексте: «'+t.characters.slice(0,16)+'» × «'+u.characters.slice(0,16)+'»');}}
+ {const bgi=c.findOne(n=>n.name==='bg'&&n.type==='INSTANCE');if(bgi){const deco=bgi.findAll(n=>!('children' in n&&n.children.length)&&n.visible!==false&&!/vignette|clear|dots$/.test(n.name)&&(n.opacity??1)>0.15).filter(n=>{const b=n.absoluteBoundingBox;return b&&b.width*b.height<0.45*C.width*C.height});
+  const content=c.findAll(n=>n.visible!==false&&!isBg(n)&&(n.type==='TEXT'||(n.effects&&n.effects.some(e=>e.type==='BACKGROUND_BLUR'))||n.name==='graphic'||n.name==='rubric'||n.name==='mark'||n.name==='figures'));
+  for(const d of deco){const a=d.absoluteRenderBounds||d.absoluteBoundingBox;const pad=(d.effects||[]).reduce((m,e)=>e.type==='LAYER_BLUR'?Math.max(m,e.radius*0.6):m,0);for(const t of content){const b=t.absoluteBoundingBox;if(!b)continue;if(a.x-pad<b.x+b.width-8&&a.x+a.width+pad>b.x+8&&a.y-pad<b.y+b.height-8&&a.y+a.height+pad>b.y+8){issues.push('декор под контентом: '+d.name+' ↔ '+(t.type==='TEXT'?'«'+t.characters.slice(0,16)+'»':t.name));break}}}}}
+ if(issues.length)out.push({card:c.name,id:c.id,n:issues.length,issues:issues.slice(0,8)});}
+return {cards:cards.length,bad:out.length,out};

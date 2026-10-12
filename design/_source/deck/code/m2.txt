@@ -1,0 +1,40 @@
+
+const {rect,path}=L2;
+const mark=async(par,kind,x,y,d=20,c='text/on-light')=>{
+ if(kind==='now'){await L2.ell(par,x,y,d,{fill:c,name:'now'});}
+ else if(kind==='mid'){await L2.ell(par,x,y,d,{stroke:c,sw:2,name:'mid'});const h=figma.createEllipse();par.appendChild(h);h.resize(d,d);h.x=x;h.y=y;L.S(h,'fills',[L.VP(c)]);h.arcData={startingAngle:Math.PI/2,endingAngle:Math.PI*1.5,innerRadius:0};h.name='mid-half';}
+ else if(kind==='far'){await L2.ell(par,x,y,d,{stroke:c,sw:2,name:'far'});}
+};
+return async(slide,o)=>{
+ const R=L.box(slide,{name:'matrix',x:0,y:0,w:1920,h:1080});
+ const X=o.x||96,Y=o.y||232,gw=o.gw||156,tw=o.tw||480,cw=88,pw=80,rh=o.rh||46;
+ const tableW=gw+tw+6*cw+pw;
+ // group headers
+ const gh=[['вычисления',0],['защита данных',2],['сенсоры',4]];
+ for(const [t,i] of gh){const x=X+gw+tw+i*cw;await L.txt(R,t,'label','text/on-light',{x:x+8,y:Y,w:2*cw-16,align:'CENTER'});rect(R,{x:x+8,y:Y+30,w:2*cw-16,h:2,fill:'text/on-light',op:.9});}
+ const subs=['QPU','вдохн.','PQC','КРК','квант.','смежн.'];
+ for(let i=0;i<6;i++){await L.txt(R,subs[i],'note','text/on-light-2',{x:X+gw+tw+i*cw,y:Y+40,w:cw,align:'CENTER'});}
+ await L.txt(R,'задача','note','text/on-light-2',{x:X+gw,y:Y+40});
+ const pg=await L.txt(R,'с.','note','text/on-light-2',{});pg.x=X+tableW-pg.width-8;pg.y=Y+40;
+ let y=Y+72;rect(R,{x:X,y,w:tableW,h:2,fill:'text/on-light'});y+=2;
+ let prev=null;const bands=[];
+ for(const [g,task,star,cells,page] of o.rows){
+  if(g&&prev!==null)rect(R,{x:X,y,w:tableW,h:1,fill:'line/on-light'});
+  if(star){const b=rect(R,{x:X,y:y,w:tableW,h:rh,fill:'bg/light-alt',r:0,name:'row/priority'});}
+  if(g)await L.txt(R,g,'note','text/on-light-2',{x:X+8,y:y+(rh-20)/2-(g.length>14?10:0),w:gw-16});
+  await L.txt(R,task,star?'body-s-strong':'body-s','text/on-light',{x:X+gw,y:y+(rh-28)/2,w:tw-16});
+  for(let i=0;i<6;i++){if(cells[i])await mark(R,cells[i],X+gw+tw+i*cw+cw/2-10,y+(rh-20)/2,20);}
+  const p=await L.txt(R,page,'label','text/on-light-2',{});p.x=X+tableW-p.width-8;p.y=y+(rh-24)/2;
+  y+=rh;prev=g||prev;}
+ rect(R,{x:X,y,w:tableW,h:1,fill:'text/on-light',op:.6});
+ // vertical separators between method groups
+ for(const i of [2,4])rect(R,{x:X+gw+tw+i*cw,y:Y+4,w:1,h:y-Y-4,fill:'line/on-light'});
+ // legend panel
+ const PX=X+tableW+54,PW=1824-PX;
+ await L.txt(R,'горизонт','kicker','text/on-light-2',{x:PX,y:Y});
+ const lg=[['now','пилот возможен сейчас, 0–2 года'],['mid','3–5 лет'],['far','5+ лет']];
+ let ly=Y+36;for(const [k,t] of lg){await mark(R,k,PX,ly+3,20);await L.txt(R,t,'body-s','text/on-light',{x:PX+36,y:ly});ly+=36;}
+ rect(R,{x:PX,y:ly+4,w:28,h:20,fill:'bg/light-alt',stroke:'line/on-light',sw:1,r:3});await L.txt(R,'высокий приоритет','body-s','text/on-light',{x:PX+36,y:ly});ly+=44;
+ L2.hair(R,PX,ly+8,PW,{c:'line/on-light'});ly+=32;
+ for(const t of o.side){const bx=L.box(R,{x:PX,y:ly,w:PW,h:10});rect(bx,{x:0,y:3,w:3,h:10,fill:'text/on-light',r:2,name:'bar'});const tx=await L.txt(bx,t,'body-s','text/on-light',{x:18,y:0,w:PW-18});bx.resize(PW,tx.height);bx.children[0].resize(3,tx.height-6);ly+=tx.height+22;}
+ return R;};

@@ -1,0 +1,32 @@
+
+const {VP,S}=L;const {rect,path,ell,arc}=L2;
+const W=560,H=330,gx=24,gy=24,X0=96,Y0=284;
+const specs=[
+ {k:'промо',hero:'×8',cap:'меньше кубитов',t:'промо на квантовом железе',b:'Промо-календарь с каннибализацией решён на отжигателе напрямую, без декомпозиции. Пока — 100 товаров одной подкатегории.',p:'→ с. 14–15',fig:'sq'},
+ {k:'операции',hero:'80 → 15',cap:'чел.-ч в неделю на расписание',t:'гибридные решатели в деле',b:'Ещё: расчёт за 2 мин вместо 25 ч и до −45% перемещений комплектовщика. Вклад квантовой части поставщики не выделяют.',p:'→ с. 16–17',fig:'pairs'},
+ {k:'задача',hero:'модель',cap:'формализация задачи',t:'модель задачи как результат',b:'Формализованная задача работает с любым решателем. Так начат и российский проект: отгрузки из РЦ на линейном программировании.',p:'→ с. 18 · 34',fig:'model'},
+ {k:'защита данных',hero:'7 858 км',cap:'магистральной квантовой сети',t:'КРК как услуга',b:'С июня 2026 года сеть открыта внешним абонентам. Ограничение — каналы, где есть оптика и данные, секретные 10+ лет.',p:'→ с. 21 · 24–26',fig:'route'},
+ {k:'защита данных',hero:'28–49%',cap:'вероятность за 10 лет',t:'сроки перехода на PQC',b:'Шанс появления компьютера, взламывающего RSA-2048, по оценке экспертов. Перехваченное сегодня расшифруют позже.',p:'→ с. 20',fig:'gauge'},
+ {k:'сенсоры',hero:'~70 т',cap:'пищевых отходов меньше',t:'качество на приёмке',b:'Albert Heijn оценивает свежесть партий у поставщика с помощью NIR и гиперспектра. Квантовый анализ состава — пока исследования.',p:'→ с. 30–31',fig:'units'},
+];
+return async(slide,i)=>{const s=specs[i];const col=i%3,row=Math.floor(i/3);
+ const m=L.box(slide,{name:'mod/'+(i+1),x:X0+col*(W+gx),y:Y0+row*(H+gy),w:W,h:H});
+ L2.hair(m,0,0,W);
+ await L.txt(m,'|'+(i+1)+'⟩','label','text/on-dark-3',{x:0,y:16});
+ await L.txt(m,s.k,'kicker','text/on-dark-2',{x:44,y:19});
+ const hy=62;
+ const hero=await L.txt(m,s.hero,'number-m','text/on-dark',{x:0,y:hy});
+ await L.txt(m,s.cap,'label','text/on-dark-2',{x:0,y:hy+hero.height+2,w:330});
+ const f=L.box(m,{name:'fig',x:W-208,y:hy,w:208,h:100});
+ if(s.fig==='sq'){rect(f,{x:112,y:2,w:96,h:96,stroke:'text/on-dark-3',sw:1.5,r:4});rect(f,{x:112,y:64,w:34,h:34,fill:'text/on-dark',r:2});}
+ if(s.fig==='pairs'){const rows=[['расписание',15/80],['расчёт',0.04],['перемещения',0.55]];for(let j=0;j<3;j++){const y=j*34;await L.txt(f,rows[j][0],'note','text/on-dark-3',{x:0,y});rect(f,{x:0,y:y+22,w:208,h:5,fill:'text/on-dark-3',op:.45,r:2});rect(f,{x:0,y:y+22,w:Math.max(4,208*rows[j][1]),h:5,fill:'text/on-dark',r:2});}}
+ if(s.fig==='model'){const mn=L.box(f,{x:0,y:30,w:76,h:40,r:8,stroke:'text/on-dark',sw:1.5});await L.txt(mn,'модель','note','text/on-dark',{x:10,y:10});
+  const ys=[4,38,72],names=['CPU','GPU','QPU'];for(let j=0;j<3;j++){const nb=L.box(f,{x:148,y:ys[j],w:60,h:26,r:6,stroke:'text/on-dark-3',sw:1.5});await L.txt(nb,names[j],'note','text/on-dark-2',{x:14,y:3});path(f,'M 76 50 C 112 50 112 '+(ys[j]+13)+' 148 '+(ys[j]+13),{w:1.5,c:'text/on-dark-3'});}}
+ if(s.fig==='route'){const pts=[[6,84],[48,60],[86,76],[124,40],[162,52],[202,14]];path(f,L2.pl(pts),{w:1.5,c:'text/on-dark-3'});for(let j=0;j<pts.length;j++){const p=pts[j];if(j===pts.length-1)await ell(f,p[0]-6,p[1]-6,12,{fill:'accent/primary',fx:'neon'});else await ell(f,p[0]-5,p[1]-5,10,{fill:'bg/dark',stroke:'text/on-dark',sw:1.5});}}
+ if(s.fig==='gauge'){const cx=104,cy=92,r=88;path(f,arc(cx,cy,r,180,360),{w:3,c:'text/on-dark-3',op:.5});path(f,arc(cx,cy,r,180+180*.28,180+180*.49),{w:7,c:'text/on-dark'});await L.txt(f,'0','note','text/on-dark-3',{x:0,y:80});await L.txt(f,'100%','note','text/on-dark-3',{x:164,y:80});}
+ if(s.fig==='units'){for(let j=0;j<7;j++)rect(f,{x:j*28,y:30,w:22,h:22,fill:'text/on-dark',r:3});await L.txt(f,'■ = 10 т','note','text/on-dark-3',{x:0,y:66});}
+ const ty=hy+hero.height+2+26+18;
+ const title=await L.txt(m,s.t,'heading','text/on-dark',{x:0,y:ty,w:W});
+ await L.txt(m,s.b,'body-s','text/on-dark-2',{x:0,y:ty+title.height+10,w:W});
+ await L.txt(m,s.p,'label','text/on-dark-3',{x:0,y:H-24});
+};

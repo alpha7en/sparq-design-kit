@@ -1,0 +1,87 @@
+[
+ {
+  "name": "x5/neon",
+  "paints": [
+   {
+    "type": "SOLID",
+    "visible": true,
+    "opacity": 1,
+    "blendMode": "NORMAL",
+    "color": {
+     "r": 1,
+     "g": 0.1599999964237213,
+     "b": 0.1599999964237213
+    },
+    "boundVariables": {}
+   }
+  ]
+ },
+ {
+  "name": "x5/glass/fill",
+  "paints": [
+   {
+    "type": "SOLID",
+    "visible": true,
+    "opacity": 0.05000000074505806,
+    "blendMode": "NORMAL",
+    "color": {
+     "r": 1,
+     "g": 1,
+     "b": 1
+    },
+    "boundVariables": {}
+   }
+  ]
+ },
+ {
+  "name": "x5/glass/stroke",
+  "paints": [
+   {
+    "type": "SOLID",
+    "visible": true,
+    "opacity": 0.14000000059604645,
+    "blendMode": "NORMAL",
+    "color": {
+     "r": 1,
+     "g": 1,
+     "b": 1
+    },
+    "boundVariables": {}
+   }
+  ]
+ },
+ {
+  "name": "x5/glass-light/fill",
+  "paints": [
+   {
+    "type": "SOLID",
+    "visible": true,
+    "opacity": 0.03500000014901161,
+    "blendMode": "NORMAL",
+    "color": {
+     "r": 0.03999999910593033,
+     "g": 0.03999999910593033,
+     "b": 0.05000000074505806
+    },
+    "boundVariables": {}
+   }
+  ]
+ },
+ {
+  "name": "x5/glass-light/stroke",
+  "paints": [
+   {
+    "type": "SOLID",
+    "visible": true,
+    "opacity": 0.10000000149011612,
+    "blendMode": "NORMAL",
+    "color": {
+     "r": 0.03999999910593033,
+     "g": 0.03999999910593033,
+     "b": 0.05000000074505806
+    },
+    "boundVariables": {}
+   }
+  ]
+ }
+]

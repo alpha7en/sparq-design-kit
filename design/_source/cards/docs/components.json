@@ -1,0 +1,1930 @@
+[
+ {
+  "id": "24:24887",
+  "type": "COMPONENT_SET",
+  "name": "sparq/tag",
+  "section": "03 · атомы: знак, рубрика-плашка (tag)",
+  "w": 1298,
+  "h": 118,
+  "desc": "Рубрика/серия. glass — по умолчанию на тёмном; neon — акцентная (обычно обложка); glass/light — на светлом; solid/red — на красном поле. Текст — свойство label.",
+  "props": {
+   "label#24:7759": {
+    "type": "TEXT",
+    "def": "рынок квантов"
+   },
+   "style": {
+    "type": "VARIANT",
+    "def": "glass",
+    "opts": [
+     "glass",
+     "neon",
+     "solid"
+    ]
+   },
+   "tone": {
+    "type": "VARIANT",
+    "def": "dark",
+    "opts": [
+     "dark",
+     "light",
+     "red"
+    ]
+   }
+  },
+  "variants": 4
+ },
+ {
+  "id": "6:2377",
+  "type": "COMPONENT_SET",
+  "name": "sparq/mark",
+  "section": "03 · атомы: знак, рубрика-плашка (tag)",
+  "w": 344,
+  "h": 140,
+  "desc": "Знак SPARQ. Одна позиция на формат: правый верхний угол, 72 px от краёв, высота 76 px @1080 (мин. 56). Охранное поле = 1/2 высоты знака. on-light — на светлых карточках (R-42, R-47).",
+  "props": {
+   "tone": {
+    "type": "VARIANT",
+    "def": "on-dark",
+    "opts": [
+     "on-dark",
+     "on-light",
+     "on-accent"
+    ]
+   }
+  },
+  "variants": 3
+ },
+ {
+  "id": "24:25016",
+  "type": "COMPONENT_SET",
+  "name": "sparq/bg",
+  "section": "02 · фоны sparq/bg — 23 варианта",
+  "w": 6900,
+  "h": 4620,
+  "desc": "23 фона в стиле «лёгкий неон + стекло». Контентные тёмные (декор в углах/полях): dark-haze, dark-gradient, dark-ring, dark-circuit, dark-ticks, dark-orbit, dark-crosshair, dark-dots, dark-wires. Под стеклянные панели: glass-orb, glass-bolt. Светлые (1–2 на карусель): light-paper, light-frost, light-grid. Красные (≤ 1): red, red-deep. Обложки (декор крупный, текстовая зона снизу/слева): cover-ring, cover-circuit, cover-interference, cover-supremat, cover-bolt, cover-orbit, cover-red-ring.",
+  "props": {
+   "bg": {
+    "type": "VARIANT",
+    "def": "dark-haze",
+    "opts": [
+     "dark-haze",
+     "dark-ring",
+     "dark-circuit",
+     "dark-ticks",
+     "glass-orb",
+     "light-paper",
+     "red",
+     "cover-ring",
+     "cover-circuit",
+     "dark-orbit",
+     "dark-crosshair",
+     "dark-dots",
+     "dark-wires",
+     "dark-gradient",
+     "glass-bolt",
+     "light-frost",
+     "light-grid",
+     "red-deep",
+     "cover-interference",
+     "cover-supremat",
+     "cover-bolt",
+     "cover-orbit",
+     "cover-red-ring"
+    ]
+   }
+  },
+  "variants": 23
+ },
+ {
+  "id": "24:25028",
+  "type": "COMPONENT_SET",
+  "name": "sparq/slot/graphic",
+  "section": "03c · слоты: место под график и фото",
+  "w": 2100,
+  "h": 1544,
+  "desc": "Место под график в карточке. В инстансе карточки заменить (instance swap) на компонент графика того же размера из W·04. Размеры: ARCHITECTURE §3.",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "XL",
+    "opts": [
+     "XL",
+     "L",
+     "M",
+     "SW",
+     "SN"
+    ]
+   }
+  },
+  "variants": 5
+ },
+ {
+  "id": "25:25744",
+  "type": "COMPONENT_SET",
+  "name": "sparq/slot/photo",
+  "section": "03c · слоты: место под график и фото",
+  "w": 3256,
+  "h": 1160,
+  "desc": "Место под фото. full — на всю карточку; window — окно 936×560; cutout/half — вырезка человека без фона (PNG). Замена: заливка слоя изображением (Fill → Image, Crop), силуэт удалить.",
+  "props": {
+   "shape": {
+    "type": "VARIANT",
+    "def": "full",
+    "opts": [
+     "full",
+     "window",
+     "cutout",
+     "half"
+    ]
+   }
+  },
+  "variants": 4
+ },
+ {
+  "id": "24:25727",
+  "type": "COMPONENT_SET",
+  "name": "sparq/card/body",
+  "section": "05 · карточки-тела sparq/card/body",
+  "w": 7040,
+  "h": 5880,
+  "desc": "Карточки-тела 1:1 на auto-layout (поля 72, зазоры 24–32). kind: text-s (≤40 слов) · text-m (41–85) · text-l (86–150, body-dense) · graphic-L/M (график снизу) · graphic-SW/SN (сбоку) · graphic-XL (лид ≤ 9 слов + график на всю) · hero (число-герой) · quote · bubble · list (3–5 пунктов с иконками) · case (тег-маркер) · two-sections · table · continue · final-figures · final-tail. tone: dark / light (1–2 на карусель) / glass / red (≤ 1). Текст — свойства title/text/…; график — instance swap «graphic» на компонент нужного размера из W·04. Фон — слой bg (sparq/bg), меняется swap.",
+  "props": {
+   "title#24:7852": {
+    "type": "TEXT",
+    "def": "ловушка размеров"
+   },
+   "counter#24:7853": {
+    "type": "TEXT",
+    "def": "|2/7⟩"
+   },
+   "text#24:7854": {
+    "type": "TEXT",
+    "def": "Государственные инвестиции в квантовые программы достигли $55 млрд. Сравнивать эти числа напрямую нельзя."
+   },
+   "source#24:7855": {
+    "type": "TEXT",
+    "def": "источник: ‹название, год›"
+   },
+   "number#24:7857": {
+    "type": "TEXT",
+    "def": "$55 млрд"
+   },
+   "who#24:7858": {
+    "type": "TEXT",
+    "def": "Имя Фамилия"
+   },
+   "role#24:7859": {
+    "type": "TEXT",
+    "def": "должность, организация"
+   },
+   "bubble#24:7860": {
+    "type": "TEXT",
+    "def": "Подойдёт тем, кто хочет создавать квантовое железо: ставить эксперименты руками и доходить до результата эмпирически."
+   },
+   "график XL#28:0": {
+    "type": "INSTANCE_SWAP",
+    "def": "24:25018"
+   },
+   "график L#28:26": {
+    "type": "INSTANCE_SWAP",
+    "def": "24:25020"
+   },
+   "график M#28:52": {
+    "type": "INSTANCE_SWAP",
+    "def": "24:25022"
+   },
+   "график SW#28:78": {
+    "type": "INSTANCE_SWAP",
+    "def": "24:25024"
+   },
+   "график SN#28:104": {
+    "type": "INSTANCE_SWAP",
+    "def": "24:25026"
+   },
+   "kind": {
+    "type": "VARIANT",
+    "def": "text-s",
+    "opts": [
+     "text-s",
+     "text-m",
+     "text-l",
+     "graphic-L",
+     "graphic-M",
+     "graphic-SW",
+     "graphic-SN",
+     "graphic-XL",
+     "hero",
+     "quote",
+     "bubble",
+     "list",
+     "case",
+     "two-sections",
+     "table",
+     "continue",
+     "final-figures",
+     "final-tail"
+    ]
+   },
+   "tone": {
+    "type": "VARIANT",
+    "def": "dark",
+    "opts": [
+     "dark",
+     "light",
+     "glass",
+     "red"
+    ]
+   }
+  },
+  "variants": 25
+ },
+ {
+  "id": "25:26165",
+  "type": "COMPONENT_SET",
+  "name": "sparq/card/title",
+  "section": "04 · заголовочные карточки sparq/card/title",
+  "w": 5880,
+  "h": 2400,
+  "desc": "Заголовочные карточки (обложки) 1:1. Шапка одна на все: рубрика (sparq/tag) слева, знак SPARQ 56 px справа на линии полей. kind: typo (серия автора, |часть N⟩) · typo-circuit (explain, с подзаголовком) · typo/red (дайджест) · rubric-number (вакансии, выпуск) · photo-full (фото на всю + затемнение) · photo-window (окно с неоновой рамкой) · person (вырезка + имя + регалии на стекле) · duo (две персоны, заголовок на стекле) · sci-plate (научный рисунок на светлом). Фото — sparq/slot/photo, заменить заливку.",
+  "props": {
+   "series#25:8008": {
+    "type": "TEXT",
+    "def": "|часть 3⟩"
+   },
+   "title#25:8009": {
+    "type": "TEXT",
+    "def": "суверенные\nгонки"
+   },
+   "subtitle#25:8010": {
+    "type": "TEXT",
+    "def": "и почему его считают следующим шагом после кубита"
+   },
+   "issue#25:8011": {
+    "type": "TEXT",
+    "def": "июль · выпуск 2"
+   },
+   "name#25:8012": {
+    "type": "TEXT",
+    "def": "Алексей\nФёдоров"
+   },
+   "regalia#25:8013": {
+    "type": "TEXT",
+    "def": "Профессор МФТИ, директор Института физики и квантовой инженерии НИТУ МИСИС"
+   },
+   "source#25:8014": {
+    "type": "TEXT",
+    "def": "рисунок: ‹источник›"
+   },
+   "kind": {
+    "type": "VARIANT",
+    "def": "typo",
+    "opts": [
+     "typo",
+     "typo-circuit",
+     "rubric-number",
+     "photo-full",
+     "photo-window",
+     "person",
+     "duo",
+     "sci-plate"
+    ]
+   },
+   "tone": {
+    "type": "VARIANT",
+    "def": "dark",
+    "opts": [
+     "dark",
+     "red",
+     "light"
+    ]
+   }
+  },
+  "variants": 9
+ },
+ {
+  "id": "28:4010",
+  "type": "COMPONENT_SET",
+  "name": "sparq/rubric",
+  "section": "03b · теги: рубрики, серии, темы, страны, статусы, служебное",
+  "w": 1700,
+  "h": 287,
+  "desc": "Рубрика с собственным глифом (R-40, R-41): news — молния, explain — кет, history — часы, Live — светящаяся точка, рынок квантов — столбики, гайд — стрелка, вакансии — портфель, дайджест — строки, как войти — шапочка. Стекло; tone=light для светлых карточек. Текст — label.",
+  "props": {
+   "label#28:148": {
+    "type": "TEXT",
+    "def": "news"
+   },
+   "rubric": {
+    "type": "VARIANT",
+    "def": "news",
+    "opts": [
+     "news",
+     "explain",
+     "history",
+     "live",
+     "market",
+     "guide",
+     "jobs",
+     "digest",
+     "edu"
+    ]
+   },
+   "tone": {
+    "type": "VARIANT",
+    "def": "dark",
+    "opts": [
+     "dark",
+     "light"
+    ]
+   }
+  },
+  "variants": 18
+ },
+ {
+  "id": "28:4021",
+  "type": "COMPONENT_SET",
+  "name": "sparq/series",
+  "section": "03b · теги: рубрики, серии, темы, страны, статусы, служебное",
+  "w": 822,
+  "h": 137,
+  "desc": "Серия и номер части из двух полей (R-10): series = название, part = |N⟩. Неоновый сегмент — номер.",
+  "props": {
+   "series#28:153": {
+    "type": "TEXT",
+    "def": "криптография"
+   },
+   "part#28:154": {
+    "type": "TEXT",
+    "def": "|4⟩"
+   },
+   "tone": {
+    "type": "VARIANT",
+    "def": "dark",
+    "opts": [
+     "dark",
+     "light"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "28:4078",
+  "type": "COMPONENT_SET",
+  "name": "sparq/topic",
+  "section": "03b · теги: рубрики, серии, темы, страны, статусы, служебное",
+  "w": 1700,
+  "h": 360,
+  "desc": "Тема/подотрасль: тихий контур, моно-шрифт, решётка. Не больше 2 на карточку, рядом с рубрикой или в подвале.",
+  "props": {
+   "label#28:183": {
+    "type": "TEXT",
+    "def": "#кубиты"
+   },
+   "topic": {
+    "type": "VARIANT",
+    "def": "кубиты",
+    "opts": [
+     "кубиты",
+     "кудиты",
+     "криптография",
+     "PQC",
+     "QKD",
+     "сенсоры",
+     "связь",
+     "железо",
+     "софт",
+     "криогеника",
+     "регуляция",
+     "инвестиции",
+     "рынок",
+     "образование"
+    ]
+   },
+   "tone": {
+    "type": "VARIANT",
+    "def": "dark",
+    "opts": [
+     "dark",
+     "light"
+    ]
+   }
+  },
+  "variants": 28
+ },
+ {
+  "id": "28:4131",
+  "type": "COMPONENT_SET",
+  "name": "sparq/country",
+  "section": "03b · теги: рубрики, серии, темы, страны, статусы, служебное",
+  "w": 1700,
+  "h": 226,
+  "desc": "Страна без флагов-растров (R-29): код ISO в светлой плашке + название. Для кейсов, таблиц, матриц.",
+  "props": {
+   "country": {
+    "type": "VARIANT",
+    "def": "RU",
+    "opts": [
+     "RU",
+     "US",
+     "CN",
+     "EU",
+     "UK",
+     "DE",
+     "FR",
+     "JP",
+     "KR",
+     "IN",
+     "IL",
+     "CA",
+     "AU"
+    ]
+   }
+  },
+  "variants": 13
+ },
+ {
+  "id": "28:4147",
+  "type": "COMPONENT_SET",
+  "name": "sparq/status",
+  "section": "03b · теги: рубрики, серии, темы, страны, статусы, служебное",
+  "w": 1700,
+  "h": 135,
+  "desc": "Статус материала: красный контур + точка. Один на карточку, только когда меняет смысл (продолжение, обновление).",
+  "props": {
+   "label#28:203": {
+    "type": "TEXT",
+    "def": "новое"
+   },
+   "status": {
+    "type": "VARIANT",
+    "def": "new",
+    "opts": [
+     "new",
+     "upd",
+     "cont",
+     "fc",
+     "op"
+    ]
+   }
+  },
+  "variants": 5
+ },
+ {
+  "id": "28:4157",
+  "type": "COMPONENT_SET",
+  "name": "sparq/meta",
+  "section": "03b · теги: рубрики, серии, темы, страны, статусы, служебное",
+  "w": 1700,
+  "h": 139,
+  "desc": "Служебное: коллаборация (channel), счётчик |n/N⟩ (n), хвост «рынок квантов #sparqexplain @sparqteam» (L-16).",
+  "props": {
+   "channel#28:206": {
+    "type": "TEXT",
+    "def": "@ForecastId"
+   },
+   "n#28:207": {
+    "type": "TEXT",
+    "def": "|2/7⟩"
+   },
+   "kind": {
+    "type": "VARIANT",
+    "def": "collab",
+    "opts": [
+     "collab",
+     "counter",
+     "tail"
+    ]
+   }
+  },
+  "variants": 3
+ },
+ {
+  "id": "28:440",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/bar-h",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 3624,
+  "h": 880,
+  "desc": "Сравнение величин по категориям (страны, компании). 5–10 строк; длинные подписи. Акцент — одна строка. Размеры: XL / L / M / SW (= слоты sparq/slot/graphic). Для новых данных — генератор sparq.charts: G.barH(parent,{w,h,…данные}) (код в sharedPluginData sparq/charts).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "XL",
+    "opts": [
+     "XL",
+     "L",
+     "M",
+     "SW"
+    ]
+   }
+  },
+  "variants": 4
+ },
+ {
+  "id": "28:508",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/bar-v",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 3088,
+  "h": 784,
+  "desc": "Сравнение 2–7 величин, когда подписи короткие; рост/масштаб «в лоб». Акцент — один столбик. Размеры: XL / L / M (= слоты sparq/slot/graphic). Для новых данных — генератор sparq.charts: G.barV(parent,{w,h,…данные}) (код в sharedPluginData sparq/charts).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "XL",
+    "opts": [
+     "XL",
+     "L",
+     "M"
+    ]
+   }
+  },
+  "variants": 3
+ },
+ {
+  "id": "28:532",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/stack-100",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 2072,
+  "h": 560,
+  "desc": "Доли одного целого (2–4 части): рынок, структура бюджета. Вместо pie, когда важен порядок. Размеры: L / M (= слоты sparq/slot/graphic). Для новых данных — генератор sparq.charts: G.stack(parent,{w,h,…данные}) (код в sharedPluginData sparq/charts).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "L",
+    "opts": [
+     "L",
+     "M"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "28:610",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/line",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 3624,
+  "h": 880,
+  "desc": "Динамика по годам, 1–3 серии; подписи значений на концах. Площадь — только у акцентной серии. Размеры: XL / L / M / SW (= слоты sparq/slot/graphic). Для новых данных — генератор sparq.charts: G.line(parent,{w,h,…данные}) (код в sharedPluginData sparq/charts).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "XL",
+    "opts": [
+     "XL",
+     "L",
+     "M",
+     "SW"
+    ]
+   }
+  },
+  "variants": 4
+ },
+ {
+  "id": "28:699",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/donut",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 2608,
+  "h": 880,
+  "desc": "Доли целого с числами (≤ 6 частей) и итог в центре. Подписи только с числами. Размеры: L / M / SW (= слоты sparq/slot/graphic). Для новых данных — генератор sparq.charts: G.donut(parent,{w,h,…данные}) (код в sharedPluginData sparq/charts).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "L",
+    "opts": [
+     "L",
+     "M",
+     "SW"
+    ]
+   }
+  },
+  "variants": 3
+ },
+ {
+  "id": "28:803",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/timeline",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 2984,
+  "h": 880,
+  "desc": "События во времени (3–7). Горизонтальный — для широких зон, вертикальный — для боковых. Размеры: XL / L / SW / SN (= слоты sparq/slot/graphic). Для новых данных — генератор sparq.charts: G.timeline(parent,{w,h,…данные}) (код в sharedPluginData sparq/charts).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "XL",
+    "opts": [
+     "XL",
+     "L",
+     "SW",
+     "SN"
+    ]
+   }
+  },
+  "variants": 4
+ },
+ {
+  "id": "28:825",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/scale",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 2072,
+  "h": 560,
+  "desc": "Экстремальное соотношение двух величин (≥ 10×) с честной полосой и бейджем «в N раз». Размеры: L / M (= слоты sparq/slot/graphic). Для новых данных — генератор sparq.charts: G.scale(parent,{w,h,…данные}) (код в sharedPluginData sparq/charts).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "L",
+    "opts": [
+     "L",
+     "M"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "28:1236",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/sankey",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 2072,
+  "h": 784,
+  "desc": "Потоки денег/ресурсов: 1–3 источника → 3–6 направлений. Самый тонкий поток остаётся видимым (≥ 4 px). Размеры: XL / L. Новые данные — генератор G.sankey (sharedPluginData sparq/charts2).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "XL",
+    "opts": [
+     "XL",
+     "L"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "28:1272",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/pyramid",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 2072,
+  "h": 784,
+  "desc": "Иерархия/лиги: 3–4 яруса со счётом и составом. Размеры: XL / L. Новые данные — генератор G.pyramid (sharedPluginData sparq/charts2).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "XL",
+    "opts": [
+     "XL",
+     "L"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "28:1296",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/funnel",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 2072,
+  "h": 560,
+  "desc": "Отбор по этапам (из N осталось M). 3–5 ступеней. Размеры: L / M. Новые данные — генератор G.funnel (sharedPluginData sparq/charts2).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "L",
+    "opts": [
+     "L",
+     "M"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "28:1640",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/waffle",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 2608,
+  "h": 880,
+  "desc": "Одна доля от целого в процентах (особенно малая, < 15 %), 1 квадрат = 1 %. Размеры: L / M / SW. Новые данные — генератор G.waffle (sharedPluginData sparq/charts2).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "L",
+    "opts": [
+     "L",
+     "M",
+     "SW"
+    ]
+   }
+  },
+  "variants": 3
+ },
+ {
+  "id": "28:1684",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/treemap",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 2608,
+  "h": 880,
+  "desc": "Структура целого из 3–6 частей с иерархией размеров. Размеры: XL / L / SW. Новые данные — генератор G.treemap (sharedPluginData sparq/charts2).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "XL",
+    "opts": [
+     "XL",
+     "L",
+     "SW"
+    ]
+   }
+  },
+  "variants": 3
+ },
+ {
+  "id": "28:1722",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/flow",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 2072,
+  "h": 560,
+  "desc": "Блок-схема «N → 1»: что из чего складывается. Размеры: L / M. Новые данные — генератор G.flow (sharedPluginData sparq/charts2).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "L",
+    "opts": [
+     "L",
+     "M"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "28:1823",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/chain",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 1056,
+  "h": 784,
+  "desc": "Цепочки этапов в 1–2 колонки; пунктир с красным — отсутствующий этап. Размеры: XL. Новые данные — генератор G.chain (sharedPluginData sparq/charts2).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "XL",
+    "opts": [
+     "XL"
+    ]
+   }
+  },
+  "variants": 1
+ },
+ {
+  "id": "28:1885",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/hub",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 2072,
+  "h": 784,
+  "desc": "Центр и 4–8 связанных узлов (экосистема, поглощения). Размеры: XL / L. Новые данные — генератор G.hub (sharedPluginData sparq/charts2).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "XL",
+    "opts": [
+     "XL",
+     "L"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "28:1921",
+  "type": "COMPONENT_SET",
+  "name": "sparq/chart/matrix",
+  "section": "06 · инфографика sparq/chart/* — 16 типов по размерам слотов",
+  "w": 1056,
+  "h": 784,
+  "desc": "Матрица 2×2: позиционирование стран/компаний по двум осям, кластеры на стекле. Размеры: XL. Новые данные — генератор G.matrix (sharedPluginData sparq/charts2).",
+  "props": {
+   "size": {
+    "type": "VARIANT",
+    "def": "XL",
+    "opts": [
+     "XL"
+    ]
+   }
+  },
+  "variants": 1
+ },
+ {
+  "id": "11:6602",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/qubit",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Кубит: разорванное кольцо знака SPARQ + состояние · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:6624",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/bloch",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Сфера Блоха: состояние кубита, «как устроен кубит» · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:6661",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/superposition",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Суперпозиция: «и 0, и 1» — половина закрашена · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:6697",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/photon",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Фотон: волновой пакет с направлением; фотонные платформы, оптика · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:6725",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/ion-trap",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Ионная ловушка: четыре электрода и ион в центре (ФИАН, IonQ, Quantinuum) · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:6743",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/neutral-atom",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Нейтральный атом в оптическом пинцете: сфокусированный луч и атом (МГУ, QuEra, Pasqal) · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:6763",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/chip",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Сверхпроводящий кубит / квантовый чип (РКЦ, МИСИС, IBM, Google) · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:6779",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/cryostat",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Криостат растворения: ступени холода, мК, гелий-3 · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:6821",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/wavefunction",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Волновая функция / плотность вероятности · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:6841",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/gate-h",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Гейт Адамара H на проводе: квантовые алгоритмы, схемы · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:6861",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/gate-x",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Гейт X (NOT) на проводе · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:6882",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/cnot",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "CNOT: управляющий кубит и цель; двухкубитные операции, запутывание · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:6908",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/circuit",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Квантовая схема: провода, гейты, управление — алгоритмы, софт · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:6927",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/measure",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Измерение: прибор со стрелкой, считывание кубита, метрология · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:6940",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/noise",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Шум и декогеренция: затухающее колебание, ошибки, коррекция · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:6961",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/atom",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Атом: квантовые технологии вообще, рубрика-заглушка · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:7603",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/entanglement",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Запутанность: две частицы, связанные скрученной парой · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:12827",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/ket",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Кет |ψ⟩: квантовое состояние, нотация Дирака, рубрика explain · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:8823",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/lock",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Замок: защита, шифрование (классическое) · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:8846",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/lock-pqc",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Замок PQC: постквантовая криптография — вместо скважины кет-скобка · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:8866",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/key",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Ключ: ключи шифрования, распределение ключей · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:8971",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/node",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Узел сети: сеть, инфраструктура, связность · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:8991",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/trusted-node",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Доверенный узел: промежуточный узел QKD-магистрали на линии · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:9017",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/certificate",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Сертификат: сертификация, валидация (CMVP, FIPS), профиль защиты · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:9033",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/shield",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Щит: безопасность, защита инфраструктуры, кибербезопасность · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:9233",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/qkd",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "QKD-канал: два узла и квантовый (фотонный) канал между ними · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:9267",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/satellite",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Спутник: спутниковая QKD, Micius, SPOQC · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:9293",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/fiber",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Оптоволокно: волоконные сети, наземная QKD · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:9052",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/clock",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Часы: атомные часы, время, сроки · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:9090",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/magnetometer",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Магнитометр: квантовые магнитометры (NV-центры), медицина, навигация · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:9106",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/navigation",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Навигация: квантовая навигация без GPS, инерциальные системы · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:10789",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/money",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Деньги / бюджет: финансирование, гос. бюджеты, выручка · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:10816",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/invest",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Инвестиции: венчур, раунды, вложения с ростом · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:10835",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/growth",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Рост: рост рынка, выручки, числа кубитов · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:10854",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/decline",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Спад: падение, сокращение, отток · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:10877",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/gov",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Госздание: государство, правительство, госпрограмма · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:10916",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/procurement",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Закупки / госзаказ: тендер, контракт, выкуп продукта · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:10939",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/bank",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Банк / надзор: сейф — финансовый регулятор, ЦБ, надзорные органы · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:10958",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/university",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Университет: вузы, образование, кадры (МФТИ, МГУ, МИСИС) · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:10984",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/lab",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Лаборатория: НИИ, исследования, эксперимент · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:11000",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/factory",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Фабрика: производство, фабы, элементная база, локализация · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:11043",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/people",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Кадры / люди: команды, специалисты, дефицит кадров · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:11063",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/sanctions",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Санкции / барьер: ограничения, экспортный контроль, закрытые рынки · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:11083",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/law",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Закон / молоток: регулирование, законы, суд, обязательные требования · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:11793",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/vacancy",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Вакансия: рубрика «вакансии», найм, карьера · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:11828",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/calendar",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Календарь: даты, дедлайны, дайджест месяца · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:11848",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/hackathon",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Мероприятие / хакатон: ноутбук с кодом — хакатоны, школы, конкурсы · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:11883",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/video",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Видео: ролик, лекция, YouTube-выпуск · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:11899",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/quote",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Цитата: прямая речь, мнение эксперта · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:11918",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/question",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Вопрос: «почему так?», FAQ, открытый вопрос · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:12011",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/document",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Документ / отчёт: стратегия, доклад, нормативный документ · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:12030",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/globe",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Глобус: страны, мир, география, геополитика · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:12049",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/cloud",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Облако: облачный доступ к квантовым компьютерам; внутри — кет · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:12061",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/energy",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Энергия: молния знака SPARQ — энергопотребление, мощность, «прорыв» · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ },
+ {
+  "id": "11:12077",
+  "type": "COMPONENT_SET",
+  "name": "sparq/icon/ban",
+  "section": "07 · иконки sparq/icon/* (одобренные)",
+  "w": 136,
+  "h": 72,
+  "desc": "Запрет: запрет, отказ регулятора, «не поддерживается» · Сетка 48, живое поле 40, обводка 3 (sparq/size stroke/ket-s), скругление тел 4–5, solid-плитка — radius/s 8. style=line — по умолчанию на тёмных карточках рядом с текстом; style=solid — в плашках-категориях и мелких размерах (32). Цвет — переменная text/on-dark; ink/red — подмена переменной (Selection colors → text/on-light / accent/primary). Размер 32–96, масштаб только инструментом Scale (K).",
+  "props": {
+   "style": {
+    "type": "VARIANT",
+    "def": "line",
+    "opts": [
+     "line",
+     "solid"
+    ]
+   }
+  },
+  "variants": 2
+ }
+]

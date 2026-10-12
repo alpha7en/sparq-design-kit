@@ -1,0 +1,24 @@
+
+const {rect,path}=L2;
+return async(slide,o)=>{
+ await L.shell(slide,{chapter:o.tab,n:o.n,total:40});
+ const R=L.box(slide,{name:'content',x:0,y:0,w:1920,h:1080});
+ const t=await L.txt(R,o.title,'chapter','text/on-dark',{x:96,y:116,name:'title'});
+ const sub=await L.txt(R,o.sub,'title-s','text/on-dark-2',{x:96,y:116+t.height+8,name:'subtitle'});
+ let y=sub.y+sub.height+28;
+ const lead=await L.txt(R,o.lead,'body','text/on-dark',{x:96,y,w:1000,name:'lead'});
+ y=Math.max(y+lead.height+36,520);
+ await L.txt(R,'в главе','kicker','text/on-dark-3',{x:96,y});
+ y+=32;L2.hair(R,96,y,1000);
+ for(const [name,pg] of o.list){
+  const c=L.box(R,{dir:'HORIZONTAL',pad:[2,10,2,10],r:8,stroke:'line/on-dark',sw:1,alignC:'CENTER',x:96,y:y+9});await L.txt(c,pg,'note','text/on-dark-2');
+  await L.txt(R,name,'body','text/on-dark',{x:96+132,y:y+7});
+  y+=44;L2.hair(R,96,y,1000);}
+ // terms
+ const TY=Math.max(y+36,826);
+ await L.txt(R,'термины главы','kicker','text/on-dark-3',{x:96,y:TY});
+ const cw=(1728-4*24)/5;
+ for(let i=0;i<o.terms.length;i++){const x=96+i*(cw+24);L2.hair(R,x,TY+30,cw,{c:'text/on-dark-3',op:.6});
+  await L.txt(R,o.terms[i][0],'body-s-strong','text/on-dark',{x,y:TY+42,w:cw});
+  await L.txt(R,o.terms[i][1],'body-s','text/on-dark-2',{x,y:TY+76,w:cw});}
+ return {R,listBottom:y,termsY:TY};};

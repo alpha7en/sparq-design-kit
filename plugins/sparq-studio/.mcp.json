@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sparq": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/server/sparq-mcp.mjs"],
+      "env": {
+        "SPARQ_DESIGN_DIR": "${CLAUDE_PLUGIN_ROOT}/design"
+      }
+    }
+  }
+}

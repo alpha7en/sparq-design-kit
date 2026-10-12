@@ -1,0 +1,87 @@
+[
+ {
+  "name": "sparq/neon",
+  "paints": [
+   {
+    "type": "SOLID",
+    "visible": true,
+    "opacity": 1,
+    "blendMode": "NORMAL",
+    "color": {
+     "r": 1,
+     "g": 0.16470588743686676,
+     "b": 0.16470588743686676
+    },
+    "boundVariables": {}
+   }
+  ]
+ },
+ {
+  "name": "sparq/glass/fill",
+  "paints": [
+   {
+    "type": "SOLID",
+    "visible": true,
+    "opacity": 0.05999999865889549,
+    "blendMode": "NORMAL",
+    "color": {
+     "r": 1,
+     "g": 1,
+     "b": 1
+    },
+    "boundVariables": {}
+   }
+  ]
+ },
+ {
+  "name": "sparq/glass/stroke",
+  "paints": [
+   {
+    "type": "SOLID",
+    "visible": true,
+    "opacity": 0.1599999964237213,
+    "blendMode": "NORMAL",
+    "color": {
+     "r": 1,
+     "g": 1,
+     "b": 1
+    },
+    "boundVariables": {}
+   }
+  ]
+ },
+ {
+  "name": "sparq/glass-light/fill",
+  "paints": [
+   {
+    "type": "SOLID",
+    "visible": true,
+    "opacity": 0.03999999910593033,
+    "blendMode": "NORMAL",
+    "color": {
+     "r": 0.04313725605607033,
+     "g": 0.04313725605607033,
+     "b": 0.05098039284348488
+    },
+    "boundVariables": {}
+   }
+  ]
+ },
+ {
+  "name": "sparq/glass-light/stroke",
+  "paints": [
+   {
+    "type": "SOLID",
+    "visible": true,
+    "opacity": 0.10000000149011612,
+    "blendMode": "NORMAL",
+    "color": {
+     "r": 0.04313725605607033,
+     "g": 0.04313725605607033,
+     "b": 0.05098039284348488
+    },
+    "boundVariables": {}
+   }
+  ]
+ }
+]

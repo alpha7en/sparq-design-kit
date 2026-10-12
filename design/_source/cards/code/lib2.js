@@ -1,0 +1,13 @@
+
+const VID={bg:'VariableID:6:2270',bgr:'VariableID:6:2271',light:'VariableID:6:2272',accent:'VariableID:6:2274',td:'VariableID:6:2276',td2:'VariableID:6:2277',tl:'VariableID:6:2278',tl2:'VariableID:6:2279',ta:'VariableID:6:2280',red:'VariableID:6:2281',deep:'VariableID:6:2282',paper:'VariableID:6:2267',white:'VariableID:6:2268',ink:'VariableID:6:2257'};
+const V={};for(const k in VID)V[k]=await figma.variables.getVariableByIdAsync(VID[k]);
+const VP=(k,o=1)=>{const p=figma.variables.setBoundVariableForPaint({type:'SOLID',color:{r:0,g:0,b:0}},'color',V[k]);return {...p,opacity:o}};
+const FX=JSON.parse(figma.root.getSharedPluginData('sparq','fx'));
+const ST={};for(const s of await figma.getLocalTextStylesAsync())ST[s.name]=s;
+const setV=(n,k,o=1,prop='fills')=>{n[prop]=[VP(k)];if(o<1)n[prop]=[{...n[prop][0],opacity:o}]};
+const AL=(par,name,dir,o={})=>{const f=figma.createFrame();f.name=name;f.layoutMode=dir;f.fills=o.fill||[];f.itemSpacing=o.gap??0;const p=o.pad??0;if(Array.isArray(p)){f.paddingTop=p[0];f.paddingRight=p[1];f.paddingBottom=p[2];f.paddingLeft=p[3]}else{f.paddingTop=f.paddingRight=f.paddingBottom=f.paddingLeft=p}f.cornerRadius=o.r||0;f.clipsContent=!!o.clip;if(par)par.appendChild(f);if(o.w&&o.h){f.resize(o.w,o.h);f.primaryAxisSizingMode='FIXED';f.counterAxisSizingMode='FIXED'}else{f.primaryAxisSizingMode='AUTO';f.counterAxisSizingMode='AUTO'}if(o.align)f.counterAxisAlignItems=o.align;if(o.justify)f.primaryAxisAlignItems=o.justify;return f};
+const T=async(par,s,st,col,o={})=>{const t=figma.createText();await figma.loadFontAsync(ST[st].fontName);await t.setTextStyleIdAsync(ST[st].id);t.characters=s;setV(t,col,o.op??1);par.appendChild(t);if(o.fill){t.layoutSizingHorizontal='FILL';t.textAutoResize='HEIGHT'}if(o.name)t.name=o.name;return t};
+const RICH=async(t,stS)=>{const s=t.characters;const parts=s.split('**');if(parts.length<2)return t;let plain='',ranges=[];parts.forEach((p,i)=>{if(i%2)ranges.push([plain.length,plain.length+p.length]);plain+=p});t.characters=plain;const S=ST[stS];await figma.loadFontAsync(S.fontName);for(const [a,b] of ranges)t.setRangeFontName(a,b,S.fontName);return t};
+const glass=async(f,light)=>{await f.setFillStyleIdAsync(light?FX.gFillL:FX.gFill);await f.setStrokeStyleIdAsync(light?FX.gStrokeL:FX.gStroke);f.strokeWeight=1.5;await f.setEffectStyleIdAsync(FX.glass);};
+const fx=async(n,k)=>{await n.setEffectStyleIdAsync(FX[k])};
+return {V,VP,FX,ST,AL,T,RICH,glass,fx,setV};

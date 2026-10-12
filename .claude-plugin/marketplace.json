@@ -1,0 +1,14 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "sparq",
+  "description": "SPARQ team tools for Claude Desktop",
+  "owner": { "name": "SPARQ team" },
+  "plugins": [
+    {
+      "name": "sparq-studio",
+      "description": "Figma design studio in the SPARQ style: decks and Telegram cards, with a bundled Figma bridge and the sealed design system.",
+      "source": "./plugins/sparq-studio",
+      "category": "design"
+    }
+  ]
+}

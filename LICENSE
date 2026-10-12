@@ -1,0 +1,6 @@
+SPARQ Studio
+Copyright (c) 2026 SPARQ team
+
+The MCP server in mcp/ and plugins/sparq-studio/server/ is a fork of figma-console-mcp
+(MIT, Copyright (c) 2025 Figma Console MCP Contributors) — see LICENSE-figma-console-mcp.
+SPARQ design assets (design/, plugins/sparq-studio/design/, skills) are internal team materials.

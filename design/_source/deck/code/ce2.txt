@@ -1,0 +1,20 @@
+return async(slide,o)=>{
+ await L.shell(slide,{chapter:o.tab,n:o.n,total:39});
+ const root=AL.slideRoot(slide,{dir:'VERTICAL',gap:0,y:116,h:880});root.name='content';
+ const top=AL.f(root,{dir:'HORIZONTAL',gap:48});AL.fillW(top);
+ const left=AL.f(top,{dir:'VERTICAL',gap:20});left.layoutSizingHorizontal='FIXED';left.resize(980,100);
+ await AL.t(left,o.title,'chapter','text/on-dark',{name:'title'});
+ await AL.t(left,o.sub,'title-s','text/on-dark-2');
+ const sp=AL.f(left,{h:4});
+ await AL.t(left,o.lead,'body','text/on-dark');
+ const sp2=AL.f(left,{h:12});
+ await AL.t(left,'в главе','kicker','text/on-dark-3');
+ const list=AL.f(left,{dir:'VERTICAL'});AL.fillW(list);AL.hair(list);
+ for(const [name,pg] of o.list){const r=AL.f(list,{dir:'HORIZONTAL',gap:24,pad:[9,0,9,0],alignC:'CENTER'});AL.fillW(r);const c=await AL.chip(r,pg);c.layoutSizingHorizontal='FIXED';c.resize(96,c.height);await AL.t(r,name,'body','text/on-dark');AL.hair(list)}
+ const slot=AL.f(top,{name:'illus-slot'});AL.fillW(slot);AL.fillH(slot);
+ const sp3=AL.f(root,{h:36});
+ await AL.t(root,'термины главы','kicker','text/on-dark-3');
+ const sp4=AL.f(root,{h:10});
+ const terms=AL.f(root,{dir:'HORIZONTAL',gap:24});AL.fillW(terms);
+ for(const [t,d] of o.terms){const c=AL.f(terms,{dir:'VERTICAL',gap:6,pad:[12,0,0,0]});AL.fillW(c);AL.hair(c,'text/on-dark-3');await AL.t(c,t,'body-s-strong','text/on-dark');await AL.t(c,d,'body-xs','text/on-dark-2')}
+ return {root,slot}};
