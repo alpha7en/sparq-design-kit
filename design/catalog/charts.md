@@ -18,3 +18,8 @@
 | chain | cols[{name,accent?,steps[{a,b,ok}]}] | XL |
 | hub | center{a,b}, nodes[{a,b}] | XL L |
 | matrix | xl[2], yl[2], clusters[{qx,qy,big,rest,accent?}] | XL |
+| strip | count, accent[индексы], label, cols? | M L |
+| areas | items[{label,w,h,note?,accent?}] | M L |
+| steps | items[{text,accent?}], loop | L XL |
+| stepLine | points[{t,v,label?,accent?,below?}], threshold{value,label}, axis[{t,label}], max? | L XL |
+| reduction | rows[{label,from,to,accent?,conditional?,cutText?}] | M L |

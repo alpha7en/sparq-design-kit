@@ -88,4 +88,38 @@ G.matrix=async(par,o)=>{const {w,h}=o;const f=box(par,'chart/matrix',w,h);const 
  for(const cl of o.clusters){const x0=cl.qx>0?cx+28:28,y0=cl.qy>0?cy+ax[2].height+28:top+20;const blk=K.AL(f,'cluster','VERTICAL',{pad:[24,28,24,28],r:28,gap:6});await K.glass(blk);if(cl.accent){blk.strokes=[R()];blk.strokeWeight=2.5}
   await K.T(blk,cl.big,'sparq/number-s','td');const r=await K.T(blk,cl.rest,'sparq/body','td',{op:.88});r.resize(Math.min(qw,520)-56,r.height);r.textAutoResize='HEIGHT';blk.x=x0;blk.y=y0;if(blk.height>qh+ax[2].height+20)issues.push('matrix: кластер «'+cl.big+'» выше четверти');}
  return f};
+// ---------- v1.1 · формы из практики поста «Gemini 4» (без неона на марках данных)
+// красный текст < 44 px — яркий #FF2A2A (переменная accent/primary тёмнее, 5:1 на чёрном не даёт)
+const TR=async(f,s,st,col,op=1)=>{if(col!=='red')return await T(f,s,st,col,op);const t=await T(f,s,st,'td',op);t.fills=[R()];return t};
+const RR=(f,x,y,w,h,acc,op=1,r=6)=>L.rc(f,x,y,Math.max(w,1),Math.max(h,1),[acc?R():W(op)],Math.min(r,w/2,h/2));
+const dash=(f,x1,y,x2,hex,op=.6)=>{for(let x=x1;x<x2;x+=22)L.ln(f,x,y,Math.min(x+12,x2),y,hex,op,3)};
+// strip: N одинаковых ячеек, часть выделена — «сколько раз повторяется блок»
+G.strip=async(par,o)=>{const {w,h,count,accent=[],label}=o;const f=box(par,'chart/strip',w,h);const gap=10;const cols=o.cols||Math.min(count,14);const rows=Math.ceil(count/cols);const cw=(w-gap*(cols-1))/cols;const lb=label?await TR(f,label,'sparq/label','td',.85):null;const lh=lb?lb.height+20:0;const ch=Math.min(cw,(h-lh-gap*(rows-1))/rows);
+ for(let i=0;i<count;i++){const r=Math.floor(i/cols),c=i%cols;RR(f,c*(cw+gap),r*(ch+gap),cw,ch,accent.includes(i),accent.includes(i)?1:.45,6)}
+ if(lb){fit(lb,w);lb.x=0;lb.y=rows*(ch+gap)-gap+20;if(lb.y+lb.height>h+1)issues.push('strip: подпись не влезает')}
+ if(ch<28)issues.push('strip: ячейки < 28 px — меньше count или cols');return f};
+// areas: прямоугольники по сторонам (ширина × высота), одинаковая площадь = «столько же, но иначе»
+G.areas=async(par,o)=>{const {w,h,items}=o;const f=box(par,'chart/areas',w,h);const n=items.length,gap=36;const cw=(w-gap*(n-1))/n;const maxW=Math.max(...items.map(i=>i.w)),maxH=Math.max(...items.map(i=>i.h));const heads=[],notes=[];
+ for(const it of items){heads.push(await TR(f,it.label,'sparq/label',it.accent?'red':'td'));notes.push(it.note?await TR(f,it.note,'sparq/number-s',it.accent?'red':'td'):null)}
+ const hh=Math.max(...heads.map(x=>x.height))+14,nh=Math.max(0,...notes.map(x=>x?x.height+10:0));const ph=h-hh-nh;
+ items.forEach((it,i)=>{const x=i*(cw+gap),rw=cw*it.w/maxW,rh=ph*it.h/maxH;RR(f,x,hh+ph-rh,rw,rh,it.accent,it.accent?1:.5,10);fit(heads[i],cw);heads[i].x=x;heads[i].y=0;if(notes[i]){fit(notes[i],cw);notes[i].x=x;notes[i].y=hh+ph+10}});return f};
+// steps: нумерованные шаги, замкнутые в круг (loop:true) — «как устроен цикл»
+G.steps=async(par,o)=>{const {w,h,items,loop}=o;const f=box(par,'chart/steps',w,h);const n=items.length;const rowH=h/n;const lx=loop?72:0;const d=Math.min(56,rowH-14);
+ const nums=[],txs=[];for(let i=0;i<n;i++){nums.push(await TR(f,String(i+1),'sparq/body-strong',items[i].accent?'ta':'td'));txs.push(await TR(f,items[i].text,'sparq/body',items[i].accent?'red':'td'))}
+ for(let i=0;i<n;i++){const it=items[i],cy=rowH*i+rowH/2;L.el(f,lx,cy-d/2,d,d,it.accent?[R()]:[W(.18)]);const nn=nums[i];nn.x=lx+d/2-nn.width/2;nn.y=cy-nn.height/2;f.appendChild(nn);
+  const tx=fit(txs[i],w-lx-d-28);tx.x=lx+d+24;tx.y=cy-tx.height/2;if(tx.height>rowH-6)issues.push('steps: шаг '+(i+1)+' выше строки');if(i<n-1)L.ln(f,lx+d/2,cy+d/2+4,lx+d/2,cy+rowH-d/2-4,'#FFFFFF',.3,2)}
+ if(loop){const y0=rowH/2,y1=h-rowH/2,x=lx-36;L.ln(f,lx,y1,x,y1,'#FF2A2A',.9,3);L.ln(f,x,y1,x,y0,'#FF2A2A',.9,3);L.ln(f,x,y0,lx-4,y0,'#FF2A2A',.9,3);L.ln(f,lx-16,y0-9,lx-4,y0,'#FF2A2A',.9,3);L.ln(f,lx-16,y0+9,lx-4,y0,'#FF2A2A',.9,3)}return f};
+// stepLine: ступенчатая линия «лучшее достигнутое» от нуля + пунктир порога
+G.stepLine=async(par,o)=>{const {w,h,points,threshold,suf=''}=o;const f=box(par,'chart/step-line',w,h);const max=o.max||Math.max(...points.map(p=>p.v),threshold?threshold.value:0)*1.05;const pl=0,pb=64,pr=0,pt=40;const W0=w-pl-pr,H0=h-pb-pt;const t0=Math.min(...points.map(p=>p.t)),t1=Math.max(...points.map(p=>p.t));
+ const X=t=>pl+(t-t0)/(t1-t0)*W0,Y=v=>pt+H0*(1-v/max);L.ln(f,0,pt+H0,w,pt+H0,'#FFFFFF',.35,2);
+ for(let i=0;i<points.length;i++){const p=points[i],x=X(p.t),y=Y(p.v);const x2=i<points.length-1?X(points[i+1].t):x;L.ln(f,x,y,x2,y,'#FFFFFF',.9,4);if(i<points.length-1)L.ln(f,x2,y,x2,Y(points[i+1].v),'#FFFFFF',.9,4)}
+ if(threshold){const y=Y(threshold.value);dash(f,0,y,w,'#FF2A2A',.85);const tl=await TR(f,threshold.label,'sparq/label','red');tl.x=8;tl.y=Math.max(0,y-tl.height-8)}
+ for(let i=0;i<points.length;i++){const p=points[i];if(!p.label)continue;const x=X(p.t),y=Y(p.v);L.el(f,x-9,y-9,18,18,p.accent?[R()]:[W(1)]);const lb=await TR(f,p.label,'sparq/body-strong',p.accent?'red':'td');lb.x=Math.min(Math.max(0,x-lb.width/2),w-lb.width);lb.y=(p.below??(threshold&&p.v<threshold.value))?y+16:y-16-lb.height}
+ for(const a of (o.axis||[])){const x=X(a.t);const lb=await TR(f,a.label,'sparq/label','td',.7);lb.x=Math.min(Math.max(0,x-lb.width/2),w-lb.width);lb.y=pt+H0+14}return f};
+// reduction: полосы «было → стало»: закрашена оставшаяся доля, срезанная — контур; conditional → пунктир
+G.reduction=async(par,o)=>{const {w,h,rows}=o;const f=box(par,'chart/reduction',w,h);const n=rows.length,rowH=h/n;const labs=[],vals=[];for(const r of rows){labs.push(await TR(f,r.label,'sparq/label','td',.85));vals.push(await TR(f,r.cutText||'−'+Math.round((1-r.to/r.from)*100)+' %','sparq/body-strong',r.accent?'red':'td'))}
+ const lw=Math.min(Math.max(...labs.map(l=>l.width)),w*.34);const x0=lw+24;const bw=w-x0-170;const th=Math.max(20,Math.min(52,rowH*.5));
+ for(let i=0;i<n;i++){const r=rows[i],cy=rowH*i+rowH/2;const lb=fit(labs[i],lw,'RIGHT');lb.x=0;lb.y=cy-lb.height/2;const kept=bw*r.to/r.from;
+  RR(f,x0,cy-th/2,kept,th,r.accent,r.accent?1:.7,6);const cut=L.rc(f,x0+kept,cy-th/2,bw-kept,th,[],6);cut.strokes=[r.accent?R():W(.5)];cut.strokeWeight=2;if(r.conditional)cut.dashPattern=[8,6];
+  vals[i].x=x0+bw+18;vals[i].y=cy-vals[i].height/2}return f};
 return {G,issues,box};

@@ -85054,7 +85054,7 @@ import { homedir as homedir2 } from "os";
 import { readFileSync as readFileSync12, existsSync as existsSync12 } from "fs";
 import { join as join15, dirname as dirname11, resolve as resolve8 } from "path";
 import { fileURLToPath as fileURLToPath4 } from "url";
-var KIT_VERSION = "1.1.0";
+var KIT_VERSION = "1.2.0";
 function findDesignDir() {
   if (process.env.SPARQ_DESIGN_DIR && existsSync12(process.env.SPARQ_DESIGN_DIR))
     return process.env.SPARQ_DESIGN_DIR;
