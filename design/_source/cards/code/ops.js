@@ -5,7 +5,7 @@ const K=await (new AF('figma',figma.root.getSharedPluginData('sparq','lib2')))(f
 const C=await (new AF('figma',figma.root.getSharedPluginData('sparq','charts2')))(figma);
 const LINT=new AF('figma','root',figma.root.getSharedPluginData('sparq','lint'));
 await figma.loadAllPagesAsync();
-const FONTS=[['Unbounded','Bold'],['Unbounded','SemiBold'],['Onest','Regular'],['Onest','Medium'],['Onest','SemiBold'],['JetBrains Mono','Regular'],['JetBrains Mono','Medium']];for(const [family,style] of FONTS){try{await figma.loadFontAsync({family,style})}catch(e){}}
+const FONTS=[['Unbounded','Bold'],['Unbounded','SemiBold'],['Onest','Regular'],['Onest','Medium'],['Onest','SemiBold'],['JetBrains Mono','Regular'],['JetBrains Mono','Medium']];globalThis.__sqFonts=globalThis.__sqFonts||new Set();for(const [family,style] of FONTS){const k=family+'|'+style;if(globalThis.__sqFonts.has(k))continue;try{await figma.loadFontAsync({family,style});globalThis.__sqFonts.add(k)}catch(e){}}
 const SYS=figma.root.children.find(p=>p.name.startsWith('SPARQ · система'));
 const SET=n=>SYS.findOne(x=>x.type==='COMPONENT_SET'&&x.name===n);
 const TITLE=SET('sparq/card/title'),BODY=SET('sparq/card/body'),BGS=SET('sparq/bg');

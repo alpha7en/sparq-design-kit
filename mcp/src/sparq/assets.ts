@@ -47,7 +47,7 @@ export function deckPrelude(): string {
 }
 /** Prelude giving user code O (cards ops) — cards code lives in the file's plugin data after setup. */
 export function cardsPrelude(): string {
-	return `const __AF = Object.getPrototypeOf(async function(){}).constructor;\nif (!figma.root.getSharedPluginData('sparq','ops')) throw new Error('SPARQ cards kit is not installed in this file — run sparq_setup_file {kit:"cards"}');\nconst O = await (new __AF('figma', figma.root.getSharedPluginData('sparq','ops')))(figma);\n`;
+	return `const __AF = Object.getPrototypeOf(async function(){}).constructor;\nif (!figma.root.getSharedPluginData('sparq','ops')) throw new Error('SPARQ cards kit is not installed in this file — run sparq_setup_file {kit:"cards"}');\nglobalThis.__sqFonts = globalThis.__sqFonts || new Set();\nconst __LF = async (f) => { const k = f.family + '|' + f.style; if (globalThis.__sqFonts.has(k)) return; await figma.loadFontAsync(f); globalThis.__sqFonts.add(k); };\n// Figma throttles repeated loadFontAsync calls within one execution; card modules get a figma proxy with a cached loader.\nconst __F = new Proxy({}, { get: (_, k) => k === 'loadFontAsync' ? __LF : (typeof figma[k] === 'function' ? figma[k].bind(figma) : figma[k]), set: (_, k, v) => { figma[k] = v; return true; }, has: (_, k) => k in figma });\nconst O = await (new __AF('figma', figma.root.getSharedPluginData('sparq','ops')))(__F);\n`;
 }
 export function auditPrelude(): string {
 	return `const __audit = await (async () => {\nlet audit;\n${asset("runtime/common/audit.js")}\nreturn audit;\n})();\n`;

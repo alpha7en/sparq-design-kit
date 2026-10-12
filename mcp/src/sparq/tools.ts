@@ -83,6 +83,14 @@ async function installTokens(ctx: Ctx, tok: any, fileKey?: string) {
 	return sum;
 }
 
+/** `**фрагмент**` in card texts → plain text + spec.bold (component text props cannot carry rich text). */
+function boldMarkup(spec: Record<string, any>): Record<string, any> {
+	const bold = new Set<string>(spec.bold || []);
+	const strip = (v: unknown) => typeof v === "string" && v.includes("**") ? v.replace(/\*\*(.+?)\*\*/g, (_m, b) => (bold.add(b), b)) : v;
+	const map = (o?: Record<string, unknown>) => o && Object.fromEntries(Object.entries(o).map(([k, v]) => [k, strip(v)]));
+	return { ...spec, props: map(spec.props), texts: map(spec.texts), bold: bold.size ? [...bold] : undefined };
+}
+
 export function registerSparqTools(server: McpServer, ctx: Ctx) {
 	// ------------------------------------------------------------------ status
 	server.tool(
@@ -304,7 +312,7 @@ return out;`;
 		async ({ slug, date, cards, fileKey, assetsDir }) => {
 			try {
 				const notes: string[] = [];
-				const specs = cards.map(c => inlineImages(c, assetsDir, notes));
+				const specs = cards.map(c => inlineImages(boldMarkup(c), assetsDir, notes));
 				const r = await run(ctx, cardsPrelude() + `await O.page(${lit(slug)},${lit(date || null)}||undefined);const out=[];
 for(const s of ${lit(specs)}){const photo=s.b64?s:null;const spec={...s};delete spec.b64;delete spec.size;const c=await O.card(spec);
  if(photo){const ph=c.node.findOne(n=>n.name==='photo');if(ph){const im=figma.createImage(figma.base64Decode(photo.b64));ph.fills=[{type:'IMAGE',imageHash:im.hash,scaleMode:'FILL'}];for(const nm of ['bg/head','bg/body']){const x=c.node.findOne(n=>n.name===nm);if(x)x.visible=false}}}

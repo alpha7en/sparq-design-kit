@@ -85099,7 +85099,11 @@ ${asset("runtime/deck/dsl.js")}
 function cardsPrelude() {
   return `const __AF = Object.getPrototypeOf(async function(){}).constructor;
 if (!figma.root.getSharedPluginData('sparq','ops')) throw new Error('SPARQ cards kit is not installed in this file \u2014 run sparq_setup_file {kit:"cards"}');
-const O = await (new __AF('figma', figma.root.getSharedPluginData('sparq','ops')))(figma);
+globalThis.__sqFonts = globalThis.__sqFonts || new Set();
+const __LF = async (f) => { const k = f.family + '|' + f.style; if (globalThis.__sqFonts.has(k)) return; await figma.loadFontAsync(f); globalThis.__sqFonts.add(k); };
+// Figma throttles repeated loadFontAsync calls within one execution; card modules get a figma proxy with a cached loader.
+const __F = new Proxy({}, { get: (_, k) => k === 'loadFontAsync' ? __LF : (typeof figma[k] === 'function' ? figma[k].bind(figma) : figma[k]), set: (_, k, v) => { figma[k] = v; return true; }, has: (_, k) => k in figma });
+const O = await (new __AF('figma', figma.root.getSharedPluginData('sparq','ops')))(__F);
 `;
 }
 function auditPrelude() {
@@ -85231,6 +85235,12 @@ return ${mod("runtime/install/tokens.js")};`, fileKey, 3e4));
   }
   sum.fontsMissing = [...new Set(sum.fontsMissing)];
   return sum;
+}
+function boldMarkup(spec) {
+  const bold = new Set(spec.bold || []);
+  const strip = (v) => typeof v === "string" && v.includes("**") ? v.replace(/\*\*(.+?)\*\*/g, (_m, b2) => (bold.add(b2), b2)) : v;
+  const map = (o) => o && Object.fromEntries(Object.entries(o).map(([k2, v]) => [k2, strip(v)]));
+  return { ...spec, props: map(spec.props), texts: map(spec.texts), bold: bold.size ? [...bold] : void 0 };
 }
 function registerSparqTools(server, ctx) {
   server.tool("sparq_status", "SPARQ Studio: one-call situation report \u2014 is the Figma bridge connected, which files are open, which one is active, which SPARQ kits (deck / cards) are installed in each, how many slides. Call it at the start of any Figma work and whenever the user asks what is open. Output is short; relay it in plain language.", {}, async () => {
@@ -85428,7 +85438,7 @@ ${code}
   server.tool("sparq_cards", "Build Telegram carousel cards (1080\xB2) from specs with the SPARQ card system (skill sparq-cards). Opens/creates page \xABP\xB7<date> <slug>\xBB and appends cards to its \xAB\u043A\u0430\u0440\u0443\u0441\u0435\u043B\u044C\xBB row. spec = {kind, tone?, bg?, props:{title,counter,text,\u2026}, bold?:[\u2026], rubric?, kicker?, chart?:{type,size,data}, texts?:{layer:text}, photo?:path}. \u2264 3\u20134 cards per call. Returns ids and lint.", { slug: external_exports.string(), date: external_exports.string().optional(), cards: external_exports.array(external_exports.record(external_exports.any())).min(1), fileKey: external_exports.string().optional(), assetsDir: external_exports.string().optional() }, async ({ slug, date: date3, cards, fileKey, assetsDir }) => {
     try {
       const notes = [];
-      const specs = cards.map((c) => inlineImages(c, assetsDir, notes));
+      const specs = cards.map((c) => inlineImages(boldMarkup(c), assetsDir, notes));
       const r = await run(ctx, cardsPrelude() + `await O.page(${lit(slug)},${lit(date3 || null)}||undefined);const out=[];
 for(const s of ${lit(specs)}){const photo=s.b64?s:null;const spec={...s};delete spec.b64;delete spec.size;const c=await O.card(spec);
  if(photo){const ph=c.node.findOne(n=>n.name==='photo');if(ph){const im=figma.createImage(figma.base64Decode(photo.b64));ph.fills=[{type:'IMAGE',imageHash:im.hash,scaleMode:'FILL'}];for(const nm of ['bg/head','bg/body']){const x=c.node.findOne(n=>n.name===nm);if(x)x.visible=false}}}
