@@ -9,7 +9,7 @@ bash tools/build-plugin.sh
 Проверка: `claude plugin validate plugins/sparq-studio` и `claude plugin validate .`.
 
 ## Выпуск версии
-1. Поднять `version` в `plugins/sparq-studio/.claude-plugin/plugin.json` и `KIT_VERSION` в `mcp/src/sparq/assets.ts` (одинаково).
+1. Поднять `version` в `plugins/sparq-studio/.claude-plugin/plugin.json` и `KIT_VERSION` в `mcp/src/sparq/assets.ts` (одинаково). `LIB_VERSION` поднимать **только** если изменился снимок компонентов (`design/library/cards.json`): файлы со старой библиотекой получат просьбу переустановить её, а это тяжело.
 2. `bash tools/build-plugin.sh`, коммит, тег (`claude plugin tag plugins/sparq-studio`), пуш.
 3. Коллеги: `/plugin update sparq-studio@sparq` → перезапуск → в рабочих файлах `sparq_setup_file` (для карточек с `replaceLibrary:true`, если менялись компоненты).
 
@@ -36,3 +36,6 @@ bash tools/build-plugin.sh
 
 ## Тест без Claude
 `node tools/dev/harness.mjs plugins/sparq-studio/server/sparq-mcp.mjs plugins/sparq-studio/design` — сервер на WebSocket 9229, вызовы инструментов через HTTP (`curl -X POST localhost:9301 -d '{"name":"sparq_status"}'`); мост Figma подключается к нему сам.
+
+## Шаблоны каруселей
+Единственный источник — `plugins/sparq-studio/skills/sparq-cards/examples/carousel-templates.jsonl`. Раздел 09 файла SPARQ.2 собирается из него: `python3 tools/figma/build-templates.py <fileKey SPARQ.2>` (нужен запущенный `tools/dev/harness.mjs`). Сначала правим JSONL, потом собираем раздел — не наоборот.

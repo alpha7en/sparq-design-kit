@@ -8,7 +8,7 @@ import { join, resolve, extname, basename } from "path";
 import { homedir } from "os";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { IFigmaConnector } from "../core/figma-connector.js";
-import { asset, json, mod, deckPrelude, cardsPrelude, auditPrelude, lit, KIT_VERSION, designDir } from "./assets.js";
+import { asset, json, mod, deckPrelude, cardsPrelude, auditPrelude, lit, KIT_VERSION, LIB_VERSION, designDir } from "./assets.js";
 import { lintTexts, words, type Profile } from "./textlint.js";
 
 type Ctx = {
@@ -190,6 +190,7 @@ export function registerSparqTools(server: McpServer, ctx: Ctx) {
 					report.cardsTokens = await installTokens(ctx, tok, fileKey);
 					const code: Record<string, string> = {};
 					for (const k of ["ops", "lib", "lib2", "lib3", "charts", "charts2", "fx", "lint", "chartdata", "mark"]) code[k] = asset(`runtime/cards/${k}.js`);
+					for (const n of ["landscape", "contours", "network", "sphere", "atom", "field"]) code["illus:" + n] = asset(`runtime/deck/illus/${n}.svg`);
 					await run(ctx, `const C=${lit(code)};for(const k in C)figma.root.setSharedPluginData('sparq',k,C[k]);figma.root.setSharedPluginData('sparq','kitVersion',${lit(KIT_VERSION)});return Object.keys(C).length;`, fileKey);
 					const LPAGE = libraryPage || 'SPARQ · система 1:1 (всё здесь)';
 					const libNames: string[] = json("library/cards.json").items.map((i: any) => i.name);
@@ -199,12 +200,21 @@ export function registerSparqTools(server: McpServer, ctx: Ctx) {
 						const lib = json("library/cards.json");
 						const items: any[] = lib.items;
 						const count = (s: any): number => 1 + (s.ch || []).reduce((a: number, c: any) => a + count(c), 0);
+						if (replaceLibrary) { // remove old sets first, in time-budgeted batches (sets with many instances delete slowly)
+							const names = items.map((i: any) => i.name);
+							for (let k = 0; k < 60; k++) {
+								const left: number = await run(ctx, `await figma.loadAllPagesAsync();const p=figma.root.children.find(p=>p.name===${lit(LPAGE)});if(!p)return 0;const N=new Set(${lit(names)});const t0=Date.now();let n=0;for(const c of p.children.slice()){if((c.type==='COMPONENT_SET'||c.type==='COMPONENT')&&N.has(c.name)){if(Date.now()-t0>15000)return 1;c.remove();n++}}return 0;`, fileKey, 30000);
+								if (!left) break;
+							}
+						}
 						let remaining: any[] = items.slice(); const installed: string[] = []; const warnings: string[] = []; let calls = 0;
 						while (remaining.length && calls < 120) {
 							calls++;
 							const win: any[] = []; let n = 0;
 							for (const it of remaining) { const c = it.variants.reduce((a: number, v: any) => a + count(v), 0); if (win.length && n + c > 700) break; win.push(it); n += c; }
-							const r = await run(ctx, `const ITEMS=${lit(win)};const PAGE_NAME=${lit(LPAGE)};const REPLACE=${!!replaceLibrary};const BUDGET_MS=18000;\nreturn ${mod("runtime/install/library.js")};`, fileKey, 30000);
+							let r: any;
+							try { r = await run(ctx, `const ITEMS=${lit(win)};const PAGE_NAME=${lit(LPAGE)};const REPLACE=false;const BUDGET_MS=15000;\nreturn ${mod("runtime/install/library.js")};`, fileKey, 30000); }
+							catch (e: any) { if (!/timed out/i.test(e.message)) throw e; await new Promise(res => setTimeout(res, 8000)); r = { installed: [], skipped: [], warnings: ["retry after timeout"] }; } // Figma keeps working; the next call resumes
 							installed.push(...r.installed); warnings.push(...r.warnings);
 							const doneNames = new Set([...r.installed, ...r.skipped]);
 							remaining = remaining.filter(it => !doneNames.has(it.name));
@@ -212,10 +222,10 @@ export function registerSparqTools(server: McpServer, ctx: Ctx) {
 						report.library = { sets: installed.length, calls, left: remaining.map((i: any) => i.name), warnings: warnings.slice(0, 12), warningsTotal: warnings.length };
 					} else {
 						const libVer: string = await run(ctx, `await figma.loadAllPagesAsync();const p=figma.root.children.find(p=>p.name===${lit(LPAGE)});return p?p.getPluginData('libVersion'):'';`, fileKey);
-						report.library = !has ? "skipped" : libVer === KIT_VERSION ? "complete" : `outdated (installed ${libVer || "before 1.3"}, plugin ${KIT_VERSION}): new backgrounds/components are missing — run again with replaceLibrary:true`;
+						report.library = !has ? "skipped" : libVer === LIB_VERSION ? "complete" : `outdated (installed ${libVer || "before 1.3"}, library ${LIB_VERSION}): new backgrounds/components are missing — run again with replaceLibrary:true (heavy: 1–3 min, Figma slows down meanwhile)`;
 					}
 					const justInstalled = report.library?.sets !== undefined && !(report.library.left || []).length;
-					if (library !== false && has || justInstalled) report.layout = await run(ctx, `const PAGE_NAME=${lit(LPAGE)};const LIB_VERSION=${lit(KIT_VERSION)};const MARK=${justInstalled};\nreturn ${mod("runtime/install/pack.js")};`, fileKey, 30000);
+					if (library !== false && has || justInstalled) report.layout = await run(ctx, `const PAGE_NAME=${lit(LPAGE)};const LIB_VERSION=${lit(LIB_VERSION)};const MARK=${justInstalled};\nreturn ${mod("runtime/install/pack.js")};`, fileKey, 30000);
 					report.cards = "installed";
 				}
 				return ok(report);

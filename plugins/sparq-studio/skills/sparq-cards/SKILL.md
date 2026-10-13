@@ -72,4 +72,4 @@ description: This skill should be used when the user asks to make Telegram cards
 ## Ресурсы
 - `references/catalog.md` — виды карточек, обложки и фоны, иконки, шаблоны каруселей, поля спецификации.
 - `references/charts.md` — нужна ли графика и какая; форматы данных генераторов.
-- `examples/carousel-templates.jsonl` — 8 готовых каруселей (читать точечно по нужному шаблону).
+- `examples/carousel-templates.jsonl` — 9 готовых каруселей (читать точечно по нужному шаблону).

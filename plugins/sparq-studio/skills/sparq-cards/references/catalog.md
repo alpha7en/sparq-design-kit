@@ -13,8 +13,8 @@
 | `kind`, `tone` | все | вид и тон; тон по умолчанию `dark` |
 | `props` | все | `title`, `counter` (`|n/N⟩`), `text`; у hero — `number`; у обложек — `series` / `subtitle` / `issue` |
 | `texts` | все | тексты слоёв по имени: quote — `text, who, role`; person — `name, regalia`; bubble — `text#2`; two-sections — `text#2` и подзаголовки |
-| `items` | `list` | до 4 пунктов `{icon, title, note}` |
-| `chart` | `graphic-*` | `{type, size, data}` — `references/charts.md` |
+| `items` | `list` | до 4 пунктов `{icon, title, note}`; `marker:"ket"` — нумерация `|1⟩ |2⟩` вместо иконок (шаги, порядок) |
+| `chart` | `graphic-*` | `{type, size, data}` — `references/charts.md`; иллюстрации X5 (ландшафт, контуры, сеть) — `chart:{type:"illus", data:{name}}` |
 | `rubric`, `kicker` | обложки, case | метка формата («explain», «рынок квантов»), надзаголовок кейса («кейс · ЕС») |
 | `bg` | только обложки | см. ниже; на остальных фон подбирается сам |
 | `photo` | photo-*, person, duo | путь к файлу на диске |
@@ -50,4 +50,5 @@
 | 6 · защита данных | typo · cover-circuit → text-m → list (lock-pqc, qkd, key, shield) → graphic-L barV → final-tail |
 | 7 · новость с механикой | typo-circuit · cover-interference → graphic-M barH → quote → graphic-M steps → graphic-M reduction → graphic-L stepLine → final-tail |
 | 8 · одно число, два прочтения | typo · cover-barcode → hero red → graphic-M strip → graphic-M areas → final-tail |
+| 9 · отчёт в карточках (дизайн-код X5) | typo · cover-barcode → graphic-L range → graphic-L horizon → list ket → graphic-L illus landscape → graphic-L stages → final-tail |
 Шаблон — основа: карточки добавлять, убирать и менять под текст автора.

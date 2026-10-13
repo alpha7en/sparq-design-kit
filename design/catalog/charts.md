@@ -23,3 +23,9 @@
 | steps | items[{text,accent?}], loop | L XL |
 | stepLine | points[{t,v,label?,accent?,below?}], threshold{value,label}, axis[{t,label}], max? | L XL |
 | reduction | rows[{label,from,to,accent?,conditional?,cutText?}] | M L |
+| range | rows[{label,from,to,accent?}], of (9) — шкала зрелости УГТ | L M XL |
+| horizon | cols[{t,mark:"now"/"mid"/"far",text}] (2–4) — рейка горизонтов | L XL |
+| stages | rows[{label,at}], names[], of, accent (индекс строки) — шкала стадий | L M |
+| ladder | steps[{label,ghost?,accent?}] сверху вниз — лестница зрелости | L XL SW |
+| graph | nodes[{id,label,x,y}] (0…1), edges[[a,b,вес 1–5,hot?]] — связи | L XL |
+| illus | name: landscape · contours · network · sphere · atom · field — иллюстрация X5 | M L XL |

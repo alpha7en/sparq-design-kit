@@ -1,9 +1,9 @@
 // Lays out the installed component library in readable rows grouped by kind (tags · backgrounds · cards · charts · icons).
-// Skips curated pages (they contain sections) — the SPARQ.2 source page is arranged by hand.
+// Skips curated pages (5+ sections, like the SPARQ.2 source page arranged by hand); pasted sections and frames go below the library.
 await figma.loadAllPagesAsync();
 const page = figma.root.children.find(p => p.name === PAGE_NAME);
 if (!page) return { packed: 0, reason: 'no page' };
-if (page.children.some(c => c.type === 'SECTION')) { page.setPluginData('libVersion', LIB_VERSION); return { packed: 0, reason: 'curated page (has sections)' }; }
+if (page.children.filter(c => c.type === 'SECTION').length >= 5) { page.setPluginData('libVersion', LIB_VERSION); return { packed: 0, reason: 'curated page (has sections)' }; }
 const ORDER = ['sparq/tag', 'sparq/mark', 'sparq/rubric', 'sparq/series', 'sparq/topic', 'sparq/country', 'sparq/status', 'sparq/meta', 'sparq/bg', 'sparq/card/title', 'sparq/card/body', 'sparq/slot/', 'sparq/chart/', 'sparq/icon-plate', 'sparq/icon/'];
 const rank = n => { const i = ORDER.findIndex(p => n.startsWith(p)); return i < 0 ? 99 : i; };
 const sets = page.children.filter(c => (c.type === 'COMPONENT_SET' || c.type === 'COMPONENT') && c.name.startsWith('sparq/'))

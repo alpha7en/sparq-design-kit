@@ -6,7 +6,7 @@ const G={};const fmt=v=>String(v).replace('.',',');
 const box=(par,name,w,h)=>{const f=figma.createFrame();f.name=name;f.resize(w,h);f.fills=[];f.clipsContent=false;if(par)par.appendChild(f);return f};
 const tone=(i,acc)=>acc?null:[1,.72,.5,.34][Math.min(i,3)];
 const rect=(f,x,y,w,h,acc,op=1,r=6)=>{const n=figma.createRectangle();f.appendChild(n);n.x=x;n.y=y;n.resize(Math.max(w,1),Math.max(h,1));n.cornerRadius=Math.min(r,w/2,h/2);if(acc){K.setV(n,'red');}else{K.setV(n,'white',op)}return n};
-const neon=async n=>{}; // no glow on data marks (client rule: no blotches, no neon on data)
+const neon=async n=>{}; /* no glow on data marks (client rule) */
 const issues=[];
 const T=async(f,s,st,col,op=1)=>await K.T(f,s,st,col,{op});
 const fit=(t,w,align)=>{t.resize(Math.max(w,10),t.height);t.textAutoResize='HEIGHT';if(align)t.textAlignHorizontal=align;return t};

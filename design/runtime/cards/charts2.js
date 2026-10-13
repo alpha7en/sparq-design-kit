@@ -5,7 +5,7 @@ const L=await (new AF('figma',figma.root.getSharedPluginData('sparq','lib')))(fi
 const K=await (new AF('figma',figma.root.getSharedPluginData('sparq','lib2')))(figma);
 const fmt=v=>String(v).replace('.',',');const T=async(f,s,st,col,op=1)=>await K.T(f,s,st,col,{op});
 const fit=(t,w,al)=>{t.resize(Math.max(w,10),t.height);t.textAutoResize='HEIGHT';if(al)t.textAlignHorizontal=al;return t};
-const neon=async n=>{}; // no glow on data marks (client rule: no blotches, no neon on data)const W=(op)=>L.P('#FFFFFF',op);const R=()=>L.P('#FF2A2A');
+const neon=async n=>{}; /* no glow on data marks (client rule) */const W=(op)=>L.P('#FFFFFF',op);const R=()=>L.P('#FF2A2A');
 const stackLabels=(labs,y0,y1,gap=12)=>{let prev=-1e9;for(const l of labs){l.t=Math.max(l.c-l.h/2,prev+gap,y0);prev=l.t+l.h}let over=prev-y1;if(over>0){for(let i=labs.length-1;i>=0&&over>0;i--){labs[i].t-=over;if(i>0){const g=labs[i].t-(labs[i-1].t+labs[i-1].h)-gap;over=g<0?-g:0}}}};
 // sankey
 G.sankey=async(par,o)=>{const {w,h,src,dst,flows}=o;const f=box(par,'chart/sankey',w,h);const tot=src.reduce((a,s)=>a+s.v,0);const gapR=34,gapL=70,nw=14;
@@ -122,4 +122,32 @@ G.reduction=async(par,o)=>{const {w,h,rows}=o;const f=box(par,'chart/reduction',
  for(let i=0;i<n;i++){const r=rows[i],cy=rowH*i+rowH/2;const lb=fit(labs[i],lw,'RIGHT');lb.x=0;lb.y=cy-lb.height/2;const kept=bw*r.to/r.from;
   RR(f,x0,cy-th/2,kept,th,r.accent,r.accent?1:.7,6);const cut=L.rc(f,x0+kept,cy-th/2,bw-kept,th,[],6);cut.strokes=[r.accent?R():W(.5)];cut.strokeWeight=2;if(r.conditional)cut.dashPattern=[8,6];
   vals[i].x=x0+bw+18;vals[i].y=cy-vals[i].height/2}return f};
+// ---------- v1.4 · дизайн-код отчёта X5 (DC5 «типы диаграмм», DC7 «иллюстрации»): белое — главное, красный — один акцент
+const mark=(f,x,y,d,kind)=>{const e=L.el(f,x,y,d,d,kind==='now'?[W(1)]:[]);e.strokes=[W(1)];e.strokeWeight=2.5;if(kind==='mid'){const p=L.el(f,x,y,d,d,[W(1)]);p.arcData={startingAngle:Math.PI/2,endingAngle:Math.PI*1.5,innerRadius:0};p.strokes=[]}return e};
+// range: полосы зрелости 1…of с выделенной зоной; rows[{label,from,to,accent?,note?}]
+G.range=async(par,o)=>{const {w,h,rows}=o;const of=o.of||9;const f=box(par,'chart/range',w,h);const n=rows.length;const top=40;const rowH=(h-top)/n;const labs=[];for(const r of rows)labs.push(await TR(f,r.label,'sparq/label','td',.85));
+ const lw=Math.min(Math.max(...labs.map(l=>l.width)),w*.36);const x0=lw+24;const g=6;const sw=(w-x0-g*(of-1))/of;const th=Math.max(14,Math.min(22,rowH*.3));
+ for(let i=1;i<=of;i++){const t=await TR(f,String(i),'sparq/label','td',.55);t.x=x0+(i-1)*(sw+g)+sw/2-t.width/2;t.y=0}
+ for(let k=0;k<n;k++){const r=rows[k],cy=top+rowH*k+rowH/2;const lb=fit(labs[k],lw,'RIGHT');lb.x=0;lb.y=cy-lb.height/2;for(let i=1;i<=of;i++){const on=i>=r.from&&i<=r.to;L.rc(f,x0+(i-1)*(sw+g),cy-th/2,sw,th,[on?(r.accent?R():W(1)):W(.16)],3)}
+  if(lb.height>rowH-6)issues.push('range: подпись «'+r.label+'» выше строки')}return f};
+// horizon: рейка горизонтов над колонками текста; cols[{t,mark:'now'|'mid'|'far',text}]
+G.horizon=async(par,o)=>{const {w,h,cols}=o;const f=box(par,'chart/horizon',w,h);const n=cols.length,gap=36;const cw=(w-gap*(n-1))/n;const d=30;L.ln(f,0,d/2,w,d/2,'#FFFFFF',.35,2);
+ for(let i=0;i<n;i++){const c=cols[i],x=i*(cw+gap);mark(f,x,0,d,c.mark||['now','mid','far'][Math.min(i,2)]);const t=await TR(f,c.t,'sparq/body-strong','td');t.x=x;t.y=d+24;const tx=await TR(f,c.text||'','sparq/body','td',.85);fit(tx,cw);tx.x=x;tx.y=t.y+t.height+10;if(tx.y+tx.height>h)issues.push('horizon: текст колонки «'+c.t+'» не влезает — короче или размер L/XL')}return f};
+// stages: шкала стадий 3–5 сегментов; rows[{label,at}], names[] (подписи стадий), accent — индекс строки
+G.stages=async(par,o)=>{const {w,h,rows,names=[]}=o;const of=o.of||names.length||4;const f=box(par,'chart/stages',w,h);const n=rows.length;const top=names.length?48:0;const rowH=(h-top)/n;const labs=[];for(const r of rows)labs.push(await TR(f,r.label,'sparq/label','td',.85));
+ const lw=Math.min(Math.max(...labs.map(l=>l.width)),w*.34);const x0=lw+24;const g=8;const sw=(w-x0-g*(of-1))/of;const th=Math.max(10,Math.min(16,rowH*.22));
+ if(names.length){const ts=[];for(let i=0;i<names.length&&i<of;i++){const t=await TR(f,names[i],'sparq/label','td',.6);ts.push(t)}if(ts.every(t=>t.width<=sw+g-6)){ts.forEach((t,i)=>{t.x=x0+i*(sw+g);t.y=0})}else{ts.forEach(t=>t.remove());const t=await TR(f,names.slice(0,of).join(' → '),'sparq/label','td',.6);fit(t,w-x0);t.x=x0;t.y=0}}
+ for(let k=0;k<n;k++){const r=rows[k],cy=top+rowH*k+rowH/2;const lb=fit(labs[k],lw,'RIGHT');lb.x=0;lb.y=cy-lb.height/2;for(let i=0;i<of;i++)L.rc(f,x0+i*(sw+g),cy-th/2,sw,th,[i<r.at?(o.accent===k?R():W(1)):W(.16)],3)}return f};
+// ladder: ступени зрелости снизу вверх; steps[{label,ghost?}] (ghost — то, чего пока нет: пунктир)
+G.ladder=async(par,o)=>{const {w,h,steps}=o;const f=box(par,'chart/ladder',w,h);const n=steps.length,gap=12;const sh=(h-gap*(n-1))/n;
+ for(let i=0;i<n;i++){const s=steps[i];const k=n-1-i;const bw=w*(.42+.58*(k+1)/n);const x=w-bw,y=i*(sh+gap);const r=L.rc(f,x,y,bw,sh,s.ghost?[]:[K.VP('bgr')],10);r.strokes=[s.ghost?W(.45):(s.accent?R():W(.35))];r.strokeWeight=s.accent?3:2;if(s.ghost)r.dashPattern=[10,8];
+  const t=await TR(f,s.label,'sparq/body-strong','td',s.ghost?.6:1);fit(t,bw-48);t.x=x+24;t.y=y+sh/2-t.height/2;if(t.height>sh-8)issues.push('ladder: ступень «'+s.label+'» выше строки')}return f};
+// graph: узлы и связи; nodes[{id,label,x,y}] (x,y в долях 0…1), edges[[a,b,вес 1…5,hot?]] — толщина = сила связи, hot — единственная акцентная
+G.graph=async(par,o)=>{const {w,h,nodes,edges=[]}=o;const f=box(par,'chart/graph',w,h);const pad=40;const P={};for(const nd of nodes)P[nd.id]=[pad+nd.x*(w-2*pad),pad+nd.y*(h-2*pad)];
+ for(const [a,b,wt=2,hot] of edges){const A=P[a],B=P[b];if(!A||!B)continue;L.ln(f,A[0],A[1],B[0],B[1],hot?'#FF2A2A':'#FFFFFF',hot?1:.25+.1*wt,1+wt*1.2)}
+ for(const nd of nodes){const [x,y]=P[nd.id];const e=L.el(f,x-10,y-10,20,20,[K.VP('bg')]);e.strokes=[W(1)];e.strokeWeight=2.5;if(nd.label){let vx=0,vy=0;for(const [a,b] of edges){const o2=a===nd.id?b:b===nd.id?a:null;if(!o2||!P[o2])continue;const dx=P[o2][0]-x,dy=P[o2][1]-y,l=Math.hypot(dx,dy)||1;vx+=dx/l;vy+=dy/l}let l=Math.hypot(vx,vy);if(l<.2){vx=0;vy=-1;l=1}vx=-vx/l;vy=-vy/l;const t=await TR(f,nd.label,'sparq/label','td',.9);const cx=x+vx*(22+t.width/2),cy=y+vy*(20+t.height/2);t.x=Math.min(Math.max(0,cx-t.width/2),w-t.width);t.y=Math.min(Math.max(0,cy-t.height/2),h-t.height)}}return f};
+// illus: иллюстрация отчёта X5 в слоте графика; name: landscape|contours|network|sphere|atom|field
+G.illus=async(par,o)=>{const {w,h,name}=o;const f=box(par,'chart/illus',w,h);const svg=figma.root.getSharedPluginData('sparq','illus:'+name);if(!svg){issues.push('illus: нет иллюстрации «'+name+'» — landscape, contours, network, sphere, atom, field');return f}
+ const g=figma.createNodeFromSvg(svg);f.appendChild(g);g.name='illus/'+name;g.x=0;g.y=0;f.clipsContent=true;const G0=g.absoluteBoundingBox;let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const n of g.findAll(n=>!('children' in n&&n.children.length)&&n.visible!==false)){const b=n.absoluteBoundingBox;if(!b||b.width*b.height>0.9*G0.width*G0.height)continue;x0=Math.min(x0,b.x);y0=Math.min(y0,b.y);x1=Math.max(x1,b.x+b.width);y1=Math.max(y1,b.y+b.height)}
+ const cw=x1-x0,ch=y1-y0;const k=Math.min(w/cw,h/ch)*0.94;const ox=(x0-G0.x)*k,oy=(y0-G0.y)*k;g.rescale(k);g.x=(w-cw*k)/2-ox;g.y=(h-ch*k)/2-oy;return f};
 return {G,issues,box};

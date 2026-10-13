@@ -85054,7 +85054,8 @@ import { homedir as homedir2 } from "os";
 import { readFileSync as readFileSync12, existsSync as existsSync12 } from "fs";
 import { join as join15, dirname as dirname11, resolve as resolve8 } from "path";
 import { fileURLToPath as fileURLToPath4 } from "url";
-var KIT_VERSION = "1.3.0";
+var KIT_VERSION = "1.4.0";
+var LIB_VERSION = "1.3.0";
 function findDesignDir() {
   if (process.env.SPARQ_DESIGN_DIR && existsSync12(process.env.SPARQ_DESIGN_DIR))
     return process.env.SPARQ_DESIGN_DIR;
@@ -85331,6 +85332,8 @@ function registerSparqTools(server, ctx) {
         const code = {};
         for (const k2 of ["ops", "lib", "lib2", "lib3", "charts", "charts2", "fx", "lint", "chartdata", "mark"])
           code[k2] = asset(`runtime/cards/${k2}.js`);
+        for (const n of ["landscape", "contours", "network", "sphere", "atom", "field"])
+          code["illus:" + n] = asset(`runtime/deck/illus/${n}.svg`);
         await run(ctx, `const C=${lit(code)};for(const k in C)figma.root.setSharedPluginData('sparq',k,C[k]);figma.root.setSharedPluginData('sparq','kitVersion',${lit(KIT_VERSION)});return Object.keys(C).length;`, fileKey);
         const LPAGE = libraryPage || "SPARQ \xB7 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 1:1 (\u0432\u0441\u0451 \u0437\u0434\u0435\u0441\u044C)";
         const libNames = json("library/cards.json").items.map((i) => i.name);
@@ -85340,6 +85343,14 @@ function registerSparqTools(server, ctx) {
           const lib = json("library/cards.json");
           const items = lib.items;
           const count = (s2) => 1 + (s2.ch || []).reduce((a2, c) => a2 + count(c), 0);
+          if (replaceLibrary) {
+            const names = items.map((i) => i.name);
+            for (let k2 = 0; k2 < 60; k2++) {
+              const left = await run(ctx, `await figma.loadAllPagesAsync();const p=figma.root.children.find(p=>p.name===${lit(LPAGE)});if(!p)return 0;const N=new Set(${lit(names)});const t0=Date.now();let n=0;for(const c of p.children.slice()){if((c.type==='COMPONENT_SET'||c.type==='COMPONENT')&&N.has(c.name)){if(Date.now()-t0>15000)return 1;c.remove();n++}}return 0;`, fileKey, 3e4);
+              if (!left)
+                break;
+            }
+          }
           let remaining = items.slice();
           const installed = [];
           const warnings = [];
@@ -85355,8 +85366,16 @@ function registerSparqTools(server, ctx) {
               win.push(it2);
               n += c;
             }
-            const r = await run(ctx, `const ITEMS=${lit(win)};const PAGE_NAME=${lit(LPAGE)};const REPLACE=${!!replaceLibrary};const BUDGET_MS=18000;
+            let r;
+            try {
+              r = await run(ctx, `const ITEMS=${lit(win)};const PAGE_NAME=${lit(LPAGE)};const REPLACE=false;const BUDGET_MS=15000;
 return ${mod("runtime/install/library.js")};`, fileKey, 3e4);
+            } catch (e) {
+              if (!/timed out/i.test(e.message))
+                throw e;
+              await new Promise((res) => setTimeout(res, 8e3));
+              r = { installed: [], skipped: [], warnings: ["retry after timeout"] };
+            }
             installed.push(...r.installed);
             warnings.push(...r.warnings);
             const doneNames = /* @__PURE__ */ new Set([...r.installed, ...r.skipped]);
@@ -85365,11 +85384,11 @@ return ${mod("runtime/install/library.js")};`, fileKey, 3e4);
           report.library = { sets: installed.length, calls, left: remaining.map((i) => i.name), warnings: warnings.slice(0, 12), warningsTotal: warnings.length };
         } else {
           const libVer = await run(ctx, `await figma.loadAllPagesAsync();const p=figma.root.children.find(p=>p.name===${lit(LPAGE)});return p?p.getPluginData('libVersion'):'';`, fileKey);
-          report.library = !has ? "skipped" : libVer === KIT_VERSION ? "complete" : `outdated (installed ${libVer || "before 1.3"}, plugin ${KIT_VERSION}): new backgrounds/components are missing \u2014 run again with replaceLibrary:true`;
+          report.library = !has ? "skipped" : libVer === LIB_VERSION ? "complete" : `outdated (installed ${libVer || "before 1.3"}, library ${LIB_VERSION}): new backgrounds/components are missing \u2014 run again with replaceLibrary:true (heavy: 1\u20133 min, Figma slows down meanwhile)`;
         }
         const justInstalled = report.library?.sets !== void 0 && !(report.library.left || []).length;
         if (library !== false && has || justInstalled)
-          report.layout = await run(ctx, `const PAGE_NAME=${lit(LPAGE)};const LIB_VERSION=${lit(KIT_VERSION)};const MARK=${justInstalled};
+          report.layout = await run(ctx, `const PAGE_NAME=${lit(LPAGE)};const LIB_VERSION=${lit(LIB_VERSION)};const MARK=${justInstalled};
 return ${mod("runtime/install/pack.js")};`, fileKey, 3e4);
         report.cards = "installed";
       }
