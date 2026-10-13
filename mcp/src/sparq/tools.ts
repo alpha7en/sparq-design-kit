@@ -83,6 +83,31 @@ async function installTokens(ctx: Ctx, tok: any, fileKey?: string) {
 	return sum;
 }
 
+/** Russian typography for card texts (same rules as the deck engine): non-breaking spaces after short words, before dashes, between numbers and units. */
+const NBSP = "\u00A0";
+const SHORT_W = /(^|[\s«(„"])(в|к|с|о|у|и|а|я|на|по|от|до|за|из|во|со|не|ни|но|же|ли|бы|для|при|как|что|или|об|под|над|без|это|все|всё|его|её|их)\s(?=\S)/gi;
+function typo(s: unknown): unknown {
+	if (typeof s !== "string" || !s) return s;
+	let x = s.replace(/ -- /g, " — ").replace(/(\d) - (\d)/g, "$1–$2");
+	x = x.replace(SHORT_W, (_m, a, w) => a + w + NBSP).replace(SHORT_W, (_m, a, w) => a + w + NBSP);
+	x = x.replace(/ —/g, NBSP + "—").replace(/(\d) (\d{3})(?!\d)/g, "$1" + NBSP + "$2").replace(/(\d) (?=[%₽$A-Za-zА-Яа-яЁё])/g, "$1" + NBSP);
+	return x;
+}
+function typoCard(spec: Record<string, any>): Record<string, any> {
+	const map = (o?: Record<string, unknown>) => o && Object.fromEntries(Object.entries(o).map(([k, v]) => [k, k === "counter" || k === "series" ? v : typo(v)]));
+	return { ...spec, bold: Array.isArray(spec.bold) ? spec.bold.map((b: string) => typo(b)) : spec.bold, props: map(spec.props), texts: map(spec.texts), items: Array.isArray(spec.items) ? spec.items.map((i: any) => typeof i === "string" ? typo(i) : { ...i, title: typo(i.title), note: typo(i.note) }) : spec.items };
+}
+/** Word norms per card kind — a kind that does not fit its text is the usual cause of «пусто» / overflow. */
+const KIND_WORDS: Record<string, [number, number]> = { "text-s": [1, 40], "text-m": [41, 85], "text-l": [86, 150], "graphic-L": [0, 35], "graphic-M": [0, 50], "graphic-XL": [0, 9], "graphic-SW": [0, 35], "graphic-SN": [0, 50], hero: [0, 30], quote: [0, 45], bubble: [0, 41], list: [0, 60], case: [0, 70], "final-tail": [0, 60], "final-figures": [0, 60], continue: [0, 85], "two-sections": [0, 70] };
+function kindNote(spec: Record<string, any>): string | null {
+	const norm = KIND_WORDS[spec.kind]; if (!norm) return null;
+	const txt = [spec.props?.text, spec.texts?.text, spec.texts?.["text#2"]].filter(Boolean).join(" ").replace(/\*\*/g, "");
+	const n = words(txt);
+	if (n > norm[1]) return `слов ${n}, норма вида ${spec.kind} — до ${norm[1]}: следующий вид или вторая карточка`;
+	if (n < norm[0]) return `слов ${n}, для ${spec.kind} мало (норма ${norm[0]}–${norm[1]}): text-s, hero или quote`;
+	return null;
+}
+
 /** `**фрагмент**` in card texts → plain text + spec.bold (component text props cannot carry rich text). */
 function boldMarkup(spec: Record<string, any>): Record<string, any> {
 	const bold = new Set<string>(spec.bold || []);
@@ -185,7 +210,12 @@ export function registerSparqTools(server: McpServer, ctx: Ctx) {
 							remaining = remaining.filter(it => !doneNames.has(it.name));
 						}
 						report.library = { sets: installed.length, calls, left: remaining.map((i: any) => i.name), warnings: warnings.slice(0, 12), warningsTotal: warnings.length };
-					} else report.library = has ? "complete (pass replaceLibrary:true to rebuild)" : "skipped";
+					} else {
+						const libVer: string = await run(ctx, `await figma.loadAllPagesAsync();const p=figma.root.children.find(p=>p.name===${lit(LPAGE)});return p?p.getPluginData('libVersion'):'';`, fileKey);
+						report.library = !has ? "skipped" : libVer === KIT_VERSION ? "complete" : `outdated (installed ${libVer || "before 1.3"}, plugin ${KIT_VERSION}): new backgrounds/components are missing — run again with replaceLibrary:true`;
+					}
+					const justInstalled = report.library?.sets !== undefined && !(report.library.left || []).length;
+					if (library !== false && has || justInstalled) report.layout = await run(ctx, `const PAGE_NAME=${lit(LPAGE)};const LIB_VERSION=${lit(KIT_VERSION)};const MARK=${justInstalled};\nreturn ${mod("runtime/install/pack.js")};`, fileKey, 30000);
 					report.cards = "installed";
 				}
 				return ok(report);
@@ -296,7 +326,7 @@ return out;`;
 	// ------------------------------------------------------------------ run
 	server.tool(
 		"sparq_run",
-		"Run custom JS in the target Figma file with the SPARQ runtime preloaded: kit='deck' gives K (deck kit: K.t, K.f, K.icon, K.T(dark)…) and D (D.build, D.block(parent, block, {T})); kit='cards' gives O (card ops: O.page, O.card, O.carousel, O.lint, O.chart…). Use for adaptations the DSL does not cover; return a small JSON result. 30 s limit per call.",
+		"Run custom JS in the target Figma file with the SPARQ runtime preloaded: kit='deck' gives K (deck kit: K.t, K.f, K.icon, K.T(dark)…) and D (D.build, D.block(parent, block, {T})); kit='cards' gives O (card ops: O.page, O.card, O.carousel, O.lint, O.chart…). Only when the user explicitly asks for something the system does not have — never to patch comments, fill empty space or move elements of built cards/slides (rebuild with another kind/block instead). Return a small JSON result. 30 s limit per call.",
 		{ code: z.string(), kit: z.enum(["deck", "cards", "none"]).optional(), fileKey: z.string().optional(), timeout: z.number().optional() },
 		async ({ code, kit, fileKey, timeout }) => {
 			try {
@@ -315,12 +345,14 @@ return out;`;
 		async ({ slug, date, cards, fileKey, assetsDir }) => {
 			try {
 				const notes: string[] = [];
-				const specs = cards.map(c => inlineImages(boldMarkup(c), assetsDir, notes));
+				const pre = cards.map(c => kindNote(c));
+				const specs = cards.map(c => inlineImages(typoCard(boldMarkup(c)), assetsDir, notes));
 				const r = await run(ctx, cardsPrelude() + `await O.page(${lit(slug)},${lit(date || null)}||undefined);const out=[];
 for(const s of ${lit(specs)}){const photo=s.b64?s:null;const spec={...s};delete spec.b64;delete spec.size;const c=await O.card(spec);
  if(photo){const ph=c.node.findOne(n=>n.name==='photo');if(ph){const im=figma.createImage(figma.base64Decode(photo.b64));ph.fills=[{type:'IMAGE',imageHash:im.hash,scaleMode:'FILL'}];for(const nm of ['bg/head','bg/body']){const x=c.node.findOne(n=>n.name===nm);if(x)x.visible=false}}}
  out.push({id:c.id,issues:c.issues,...(c.notes&&c.notes.length?{notes:c.notes}:{})})}
 const l=await O.lint();return {cards:out,lint:l};`, fileKey, 30000);
+				if (r && Array.isArray(r.cards)) r.cards.forEach((c: any, k: number) => { if (pre[k]) c.notes = [...(c.notes || []), pre[k]]; });
 				return ok({ ...r, notes });
 			} catch (e: any) { return fail(e.message); }
 		},
@@ -424,7 +456,7 @@ return all.filter(s=>!keys||keys.includes(s.getSharedPluginData('sparqdeck','key
 /** Upstream figma-console tools kept in the SPARQ toolset (the rest is hidden unless SPARQ_TOOLSET=full). */
 export const UPSTREAM_KEEP = new Set([
 	"figma_get_status", "figma_list_open_files", "figma_navigate", "figma_reconnect", "figma_diagnose",
-	"figma_execute", "figma_capture_screenshot", "figma_get_selection",
+	"figma_capture_screenshot", "figma_get_selection",
 	"figma_get_comments", "figma_post_comment", "figma_delete_comment",
 	"figma_list_slides", "figma_skip_slide", "figma_reorder_slides", "figma_focus_slide", "figma_set_image_fill",
 ]);

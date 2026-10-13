@@ -5,7 +5,7 @@ const L=await (new AF('figma',figma.root.getSharedPluginData('sparq','lib')))(fi
 const K=await (new AF('figma',figma.root.getSharedPluginData('sparq','lib2')))(figma);
 const fmt=v=>String(v).replace('.',',');const T=async(f,s,st,col,op=1)=>await K.T(f,s,st,col,{op});
 const fit=(t,w,al)=>{t.resize(Math.max(w,10),t.height);t.textAutoResize='HEIGHT';if(al)t.textAlignHorizontal=al;return t};
-const neon=async n=>{await K.fx(n,'neon')};const W=(op)=>L.P('#FFFFFF',op);const R=()=>L.P('#FF2A2A');
+const neon=async n=>{}; // no glow on data marks (client rule: no blotches, no neon on data)const W=(op)=>L.P('#FFFFFF',op);const R=()=>L.P('#FF2A2A');
 const stackLabels=(labs,y0,y1,gap=12)=>{let prev=-1e9;for(const l of labs){l.t=Math.max(l.c-l.h/2,prev+gap,y0);prev=l.t+l.h}let over=prev-y1;if(over>0){for(let i=labs.length-1;i>=0&&over>0;i--){labs[i].t-=over;if(i>0){const g=labs[i].t-(labs[i-1].t+labs[i-1].h)-gap;over=g<0?-g:0}}}};
 // sankey
 G.sankey=async(par,o)=>{const {w,h,src,dst,flows}=o;const f=box(par,'chart/sankey',w,h);const tot=src.reduce((a,s)=>a+s.v,0);const gapR=34,gapL=70,nw=14;
@@ -72,7 +72,7 @@ G.chain=async(par,o)=>{const {w,h,cols}=o;const f=box(par,'chart/chain',w,h);con
  return f};
 // hub
 G.hub=async(par,o)=>{const {w,h,center,nodes}=o;const f=box(par,'chart/hub',w,h);const cx=w/2,cy=h/2;const R0=Math.min(130,h*0.2);
- const c=L.el(f,cx-R0,cy-R0,2*R0,2*R0,[R()]);await neon(c);const ring=L.el(f,cx-R0-16,cy-R0-16,2*R0+32,2*R0+32,[]);ring.strokes=[L.P('#FF2A2A',.5)];ring.strokeWeight=2;
+ const c=L.el(f,cx-R0,cy-R0,2*R0,2*R0,[K.VP('bg')]);c.strokes=[R()];c.strokeWeight=3;const ring=L.el(f,cx-R0-16,cy-R0-16,2*R0+32,2*R0+32,[]);ring.strokes=[L.P('#FF2A2A',.5)];ring.strokeWeight=2;
  const a=await T(f,center.a,'sparq/number-s','td');const b=await T(f,center.b,'sparq/label','td');fit(b,2*R0-24,'CENTER');a.x=cx-a.width/2;b.x=cx-b.width/2;const hh=a.height+4+b.height;a.y=cy-hh/2;b.y=a.y+a.height+4;
  const n=nodes.length,half=Math.ceil(n/2);const tw=Math.min(320,(w-2*R0)/2-80);
  for(let i=0;i<n;i++){const left=i<half;const k=left?i:i-half;const cnt=left?half:n-half;const ry=cnt===1?cy:k*(h-1)/(cnt-1);const nd=nodes[i];

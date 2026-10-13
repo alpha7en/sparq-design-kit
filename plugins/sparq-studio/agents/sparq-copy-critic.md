@@ -10,7 +10,7 @@ color: yellow
 ## Материал
 - Тексты из Figma: `sparq_audit` (поле lint и тексты) или `sparq_text_lint {texts, profile}` по переданному тексту. Профиль: `report` (аналитика), `pitch` (питч, «мы» можно), `post` (Telegram).
 - ТЗ/бриф, если передан путь: тексты, помеченные финальными, не переписывать — только ошибки и сокращения.
-- Правила: `${CLAUDE_PLUGIN_ROOT}/skills/sparq-editor/SKILL.md`, `references/style.md` там же, `${CLAUDE_PLUGIN_ROOT}/skills/sparq-studio/references/lessons.md` (разделы «Текст», «Драматургия»).
+- Правила: `${CLAUDE_PLUGIN_ROOT}/skills/sparq-editor/SKILL.md`, `references/voice-and-facts.md` и `references/style.md` там же.
 
 ## Что ловить
 1. ИИ-язык: штампы, разгоны, «играет ключевую роль», искусственные триады, канцелярит, «является», пустые эпитеты, «не X, а Y», слоганы в заголовках, мета-строки.

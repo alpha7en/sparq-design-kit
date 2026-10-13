@@ -12,7 +12,7 @@ T["t1"] = dict(title="шаблон 1 · аналитика рынка", note="с
  dict(kind="final-figures", texts={"title": "итог", "counter": "|6/6⟩", "text": "У каждой страны своя модель участия государства."}),
 ])
 T["t2"] = dict(title="шаблон 2 · кейсы стран", note="регуляторика и геополитика: вход → кейсы → позиции → финал. 6 карточек.", cards=[
- dict(kind="typo", bg="cover-network", rubric="рынок квантов", props=P(title="безопасность\nпротив политики", series="|криптография 2⟩")),
+ dict(kind="typo", bg="cover-ring-side", rubric="рынок квантов", props=P(title="безопасность\nпротив политики", series="|криптография 2⟩")),
  dict(kind="text-s", props=P(title="введение", counter="|1/5⟩", text="Одни и те же технологии государства оценивают противоположно — и это решение политическое.")),
  dict(kind="case", kicker="кейс · ЕС", props=P(title="кейс\nЕвросоюза", counter="|2/5⟩", text="С 2019 года 27 стран ЕС строят общую квантовую сеть EuroQCI к 2027 году. Но в 2024-м агентства четырёх стран назвали QKD недостаточно зрелой.")),
  dict(kind="case", kicker="кейс · Великобритания", props=P(title="кейс\nБритании", counter="|3/5⟩", text="Центр кибербезопасности заявляет жёстко: агентство не поддерживает использование QKD для правительственных задач.")),
@@ -35,14 +35,14 @@ T["t4"] = dict(title="шаблон 4 · персона / history", note="ист�
  dict(kind="final-tail", tone="red", props=P(title="дальше —\n300 кубитов", text="прошлые выпуски history")),
 ])
 T["t5"] = dict(title="шаблон 5 · оптимизация и вычисления", note="задача, которая сводится к поиску минимума: что это → как ищут → какие задачи → результат. 5 карточек.", cards=[
- dict(kind="typo", bg="cover-landscape", rubric="explain", props=P(title="поиск\nминимума", series="|вычисления 1⟩")),
+ dict(kind="typo", bg="cover-ring-horizon", rubric="explain", props=P(title="поиск\nминимума", series="|вычисления 1⟩")),
  dict(kind="text-m", props=P(title="как ищут решение", counter="|1/4⟩", text="Логистика сводится к поиску минимума: из тысяч вариантов нужен самый дешёвый. Классический алгоритм застревает в **локальном минимуме**, квантовый отжиг может «пройти насквозь».")),
  dict(kind="list", props=P(title="три класса задач", counter="|2/4⟩", text="Где поиск минимума встречается в ритейле:"), items=[dict(icon="navigation", title="маршруты", note="доставка в магазины и на склады"), dict(icon="clock", title="расписания", note="смены, окна приёмки, промо"), dict(icon="people", title="размещение", note="запасы, комплектовщики, волны")]),
  dict(kind="hero", props=P(title="результат", counter="|3/4⟩", number="61 vs 142", text="машины в симуляции: Aisin · Япония, 340 тыс. коробок")),
  dict(kind="final-tail", tone="red", props=P(title="выбирает\nзадача", text="прошлые выпуски explain: вычисления")),
 ])
 T["t6"] = dict(title="шаблон 6 · защита данных", note="криптография и каналы: угроза → два контура → сроки → вывод. 5 карточек.", cards=[
- dict(kind="typo", bg="cover-contours", rubric="рынок квантов", props=P(title="защита\nданных", series="|PQC и КРК⟩")),
+ dict(kind="typo", bg="cover-circuit", rubric="рынок квантов", props=P(title="защита\nданных", series="|PQC и КРК⟩")),
  dict(kind="text-m", props=P(title="отложенная расшифровка", counter="|1/4⟩", text="Данные, перехваченные сегодня, можно расшифровать через 10–15 лет. Поэтому срок угрозы считают от **срока хранения**, а не от даты появления компьютера.")),
  dict(kind="list", props=P(title="два контура", counter="|2/4⟩", text="Защита строится в два слоя:"), items=[dict(icon="lock-pqc", title="PQC", note="новые алгоритмы в программном обеспечении"), dict(icon="qkd", title="КРК", note="ключи по квантовому каналу между узлами"), dict(icon="key", title="управление ключами", note="смена и хранение"), dict(icon="shield", title="гибрид", note="оба контура вместе на критичных каналах")]),
  dict(kind="graphic-L", props=P(title="срок угрозы", counter="|3/4⟩", text="Вероятность, что квантовый компьютер взломает RSA-2048 (середина оценки):"), chart=dict(type="barV", size="L", data=dict(data=[dict(label="через 10 лет", value=39), dict(label="через 15 лет", value=69, accent=1)], suf=" %"))),

@@ -8,7 +8,7 @@ import { readFileSync, existsSync } from "fs";
 import { join, dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 
-export const KIT_VERSION = "1.2.0";
+export const KIT_VERSION = "1.3.0";
 
 function findDesignDir(): string {
 	if (process.env.SPARQ_DESIGN_DIR && existsSync(process.env.SPARQ_DESIGN_DIR)) return process.env.SPARQ_DESIGN_DIR;

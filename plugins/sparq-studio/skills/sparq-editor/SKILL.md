@@ -41,4 +41,5 @@ description: This skill should be used when the user asks to proofread, edit or 
 Перед сдачей большой работы — агенты `sparq-copy-critic` (тексты) и `sparq-fact-checker` (цифры против источников, свежесть новостей). Сборщик не бывает сам себе критиком.
 
 ## Ресурсы
-- `references/style.md` — расширенный стилевой гид SPARQ: белый список конструкций, полужирный, финальный блок, анонс в Telegram.
+- `references/voice-and-facts.md` — голос, факты, драматургия (читать перед первой вычиткой в сессии).
+- `references/style.md` — белый и чёрный списки конструкций, полужирный, финальный блок, анонс в Telegram.

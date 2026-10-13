@@ -85054,7 +85054,7 @@ import { homedir as homedir2 } from "os";
 import { readFileSync as readFileSync12, existsSync as existsSync12 } from "fs";
 import { join as join15, dirname as dirname11, resolve as resolve8 } from "path";
 import { fileURLToPath as fileURLToPath4 } from "url";
-var KIT_VERSION = "1.2.0";
+var KIT_VERSION = "1.3.0";
 function findDesignDir() {
   if (process.env.SPARQ_DESIGN_DIR && existsSync12(process.env.SPARQ_DESIGN_DIR))
     return process.env.SPARQ_DESIGN_DIR;
@@ -85236,6 +85236,33 @@ return ${mod("runtime/install/tokens.js")};`, fileKey, 3e4));
   sum.fontsMissing = [...new Set(sum.fontsMissing)];
   return sum;
 }
+var NBSP = "\xA0";
+var SHORT_W = /(^|[\s«(„"])(в|к|с|о|у|и|а|я|на|по|от|до|за|из|во|со|не|ни|но|же|ли|бы|для|при|как|что|или|об|под|над|без|это|все|всё|его|её|их)\s(?=\S)/gi;
+function typo(s2) {
+  if (typeof s2 !== "string" || !s2)
+    return s2;
+  let x2 = s2.replace(/ -- /g, " \u2014 ").replace(/(\d) - (\d)/g, "$1\u2013$2");
+  x2 = x2.replace(SHORT_W, (_m, a2, w2) => a2 + w2 + NBSP).replace(SHORT_W, (_m, a2, w2) => a2 + w2 + NBSP);
+  x2 = x2.replace(/ —/g, NBSP + "\u2014").replace(/(\d) (\d{3})(?!\d)/g, "$1" + NBSP + "$2").replace(/(\d) (?=[%₽$A-Za-zА-Яа-яЁё])/g, "$1" + NBSP);
+  return x2;
+}
+function typoCard(spec) {
+  const map = (o) => o && Object.fromEntries(Object.entries(o).map(([k2, v]) => [k2, k2 === "counter" || k2 === "series" ? v : typo(v)]));
+  return { ...spec, bold: Array.isArray(spec.bold) ? spec.bold.map((b2) => typo(b2)) : spec.bold, props: map(spec.props), texts: map(spec.texts), items: Array.isArray(spec.items) ? spec.items.map((i) => typeof i === "string" ? typo(i) : { ...i, title: typo(i.title), note: typo(i.note) }) : spec.items };
+}
+var KIND_WORDS = { "text-s": [1, 40], "text-m": [41, 85], "text-l": [86, 150], "graphic-L": [0, 35], "graphic-M": [0, 50], "graphic-XL": [0, 9], "graphic-SW": [0, 35], "graphic-SN": [0, 50], hero: [0, 30], quote: [0, 45], bubble: [0, 41], list: [0, 60], case: [0, 70], "final-tail": [0, 60], "final-figures": [0, 60], continue: [0, 85], "two-sections": [0, 70] };
+function kindNote(spec) {
+  const norm = KIND_WORDS[spec.kind];
+  if (!norm)
+    return null;
+  const txt = [spec.props?.text, spec.texts?.text, spec.texts?.["text#2"]].filter(Boolean).join(" ").replace(/\*\*/g, "");
+  const n = words2(txt);
+  if (n > norm[1])
+    return `\u0441\u043B\u043E\u0432 ${n}, \u043D\u043E\u0440\u043C\u0430 \u0432\u0438\u0434\u0430 ${spec.kind} \u2014 \u0434\u043E ${norm[1]}: \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u0432\u0438\u0434 \u0438\u043B\u0438 \u0432\u0442\u043E\u0440\u0430\u044F \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0430`;
+  if (n < norm[0])
+    return `\u0441\u043B\u043E\u0432 ${n}, \u0434\u043B\u044F ${spec.kind} \u043C\u0430\u043B\u043E (\u043D\u043E\u0440\u043C\u0430 ${norm[0]}\u2013${norm[1]}): text-s, hero \u0438\u043B\u0438 quote`;
+  return null;
+}
 function boldMarkup(spec) {
   const bold = new Set(spec.bold || []);
   const strip = (v) => typeof v === "string" && v.includes("**") ? v.replace(/\*\*(.+?)\*\*/g, (_m, b2) => (bold.add(b2), b2)) : v;
@@ -85336,8 +85363,14 @@ return ${mod("runtime/install/library.js")};`, fileKey, 3e4);
             remaining = remaining.filter((it2) => !doneNames.has(it2.name));
           }
           report.library = { sets: installed.length, calls, left: remaining.map((i) => i.name), warnings: warnings.slice(0, 12), warningsTotal: warnings.length };
-        } else
-          report.library = has ? "complete (pass replaceLibrary:true to rebuild)" : "skipped";
+        } else {
+          const libVer = await run(ctx, `await figma.loadAllPagesAsync();const p=figma.root.children.find(p=>p.name===${lit(LPAGE)});return p?p.getPluginData('libVersion'):'';`, fileKey);
+          report.library = !has ? "skipped" : libVer === KIT_VERSION ? "complete" : `outdated (installed ${libVer || "before 1.3"}, plugin ${KIT_VERSION}): new backgrounds/components are missing \u2014 run again with replaceLibrary:true`;
+        }
+        const justInstalled = report.library?.sets !== void 0 && !(report.library.left || []).length;
+        if (library !== false && has || justInstalled)
+          report.layout = await run(ctx, `const PAGE_NAME=${lit(LPAGE)};const LIB_VERSION=${lit(KIT_VERSION)};const MARK=${justInstalled};
+return ${mod("runtime/install/pack.js")};`, fileKey, 3e4);
         report.cards = "installed";
       }
       return ok2(report);
@@ -85427,7 +85460,7 @@ return out;`;
     }
   });
   server.tool("sparq_text_lint", "Editorial lint for draft texts before they go into Figma (AI clich\xE9s, \xAB\u043D\u0435 X, \u0430 Y\xBB, overclaims, empty evaluations, bureaucratese, typography). Works offline.", { texts: external_exports.array(external_exports.object({ where: external_exports.string(), text: external_exports.string() })), profile: external_exports.enum(["report", "pitch", "post"]).optional(), blacklist: external_exports.array(external_exports.string()).optional() }, async ({ texts, profile, blacklist }) => ok2({ hits: lintTexts(texts, profile || "pitch", blacklist || []), words: texts.map((t) => ({ where: t.where, words: words2(t.text) })) }));
-  server.tool("sparq_run", "Run custom JS in the target Figma file with the SPARQ runtime preloaded: kit='deck' gives K (deck kit: K.t, K.f, K.icon, K.T(dark)\u2026) and D (D.build, D.block(parent, block, {T})); kit='cards' gives O (card ops: O.page, O.card, O.carousel, O.lint, O.chart\u2026). Use for adaptations the DSL does not cover; return a small JSON result. 30 s limit per call.", { code: external_exports.string(), kit: external_exports.enum(["deck", "cards", "none"]).optional(), fileKey: external_exports.string().optional(), timeout: external_exports.number().optional() }, async ({ code, kit, fileKey, timeout }) => {
+  server.tool("sparq_run", "Run custom JS in the target Figma file with the SPARQ runtime preloaded: kit='deck' gives K (deck kit: K.t, K.f, K.icon, K.T(dark)\u2026) and D (D.build, D.block(parent, block, {T})); kit='cards' gives O (card ops: O.page, O.card, O.carousel, O.lint, O.chart\u2026). Only when the user explicitly asks for something the system does not have \u2014 never to patch comments, fill empty space or move elements of built cards/slides (rebuild with another kind/block instead). Return a small JSON result. 30 s limit per call.", { code: external_exports.string(), kit: external_exports.enum(["deck", "cards", "none"]).optional(), fileKey: external_exports.string().optional(), timeout: external_exports.number().optional() }, async ({ code, kit, fileKey, timeout }) => {
     try {
       const pre = kit === "cards" ? cardsPrelude() : kit === "none" ? "" : deckPrelude();
       const r = await run(ctx, pre + `return await (async () => {
@@ -85441,12 +85474,18 @@ ${code}
   server.tool("sparq_cards", "Build Telegram carousel cards (1080\xB2) from specs with the SPARQ card system (skill sparq-cards). Opens/creates page \xABP\xB7<date> <slug>\xBB and appends cards to its \xAB\u043A\u0430\u0440\u0443\u0441\u0435\u043B\u044C\xBB row. spec = {kind, tone?, bg? (omit or 'auto' = picked by role; blotch backgrounds are replaced), props:{title,counter,text,\u2026}, bold?:[\u2026], rubric?, kicker?, items?:[{icon,title,note}] (kind=list, \u22644), plate?:{icon,tone,size,x,y}, chart?:{type,size,data}, texts?:{layer:text}, photo?:path}. \u2264 3\u20134 cards per call. Returns ids and lint.", { slug: external_exports.string(), date: external_exports.string().optional(), cards: external_exports.array(external_exports.record(external_exports.any())).min(1), fileKey: external_exports.string().optional(), assetsDir: external_exports.string().optional() }, async ({ slug, date: date3, cards, fileKey, assetsDir }) => {
     try {
       const notes = [];
-      const specs = cards.map((c) => inlineImages(boldMarkup(c), assetsDir, notes));
+      const pre = cards.map((c) => kindNote(c));
+      const specs = cards.map((c) => inlineImages(typoCard(boldMarkup(c)), assetsDir, notes));
       const r = await run(ctx, cardsPrelude() + `await O.page(${lit(slug)},${lit(date3 || null)}||undefined);const out=[];
 for(const s of ${lit(specs)}){const photo=s.b64?s:null;const spec={...s};delete spec.b64;delete spec.size;const c=await O.card(spec);
  if(photo){const ph=c.node.findOne(n=>n.name==='photo');if(ph){const im=figma.createImage(figma.base64Decode(photo.b64));ph.fills=[{type:'IMAGE',imageHash:im.hash,scaleMode:'FILL'}];for(const nm of ['bg/head','bg/body']){const x=c.node.findOne(n=>n.name===nm);if(x)x.visible=false}}}
  out.push({id:c.id,issues:c.issues,...(c.notes&&c.notes.length?{notes:c.notes}:{})})}
 const l=await O.lint();return {cards:out,lint:l};`, fileKey, 3e4);
+      if (r && Array.isArray(r.cards))
+        r.cards.forEach((c, k2) => {
+          if (pre[k2])
+            c.notes = [...c.notes || [], pre[k2]];
+        });
       return ok2({ ...r, notes });
     } catch (e) {
       return fail2(e.message);
@@ -85554,7 +85593,6 @@ var UPSTREAM_KEEP = /* @__PURE__ */ new Set([
   "figma_navigate",
   "figma_reconnect",
   "figma_diagnose",
-  "figma_execute",
   "figma_capture_screenshot",
   "figma_get_selection",
   "figma_get_comments",
